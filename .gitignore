@@ -1,0 +1,5 @@
+*.userprefs
+/packages
+/SoftwareRenderer/bin/*
+/SoftwareRenderer/obj/*
+*~

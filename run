@@ -1,0 +1,12 @@
+#!/bin/sh
+
+dir="$(realpath ${0})"
+dir="$(dirname ${dir})"
+proj="$(basename ${dir})"
+
+olddir="$(pwd)"
+cd "${dir}"
+target="${1-Release}"
+exepath="${proj}/bin/${target}/${proj}.exe"
+mono "${exepath}"
+cd "${olddir}"
