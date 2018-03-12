@@ -12,6 +12,8 @@ namespace SoftwareRenderer
         protected Bitmap frameBuffer;
         protected byte[] displayComponents;
 
+        public Bitmap FrameBuffer { get { return frameBuffer; } }
+
         public Display()
             : base(800, 600, GraphicsMode.Default, "opentk",
                    GameWindowFlags.FixedWindow)
