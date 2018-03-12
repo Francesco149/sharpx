@@ -9,7 +9,7 @@ namespace SoftwareRenderer
     public class Stars3D
     {
         static readonly float tanHalfFOV =
-            MathHelper.DegreesToRadians(70.0f / 2);
+          (float)Math.Tan(MathHelper.DegreesToRadians(70.0f / 2));
 
         static readonly Random rng = new Random();
 
