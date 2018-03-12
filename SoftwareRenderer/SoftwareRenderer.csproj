@@ -40,6 +40,7 @@
     <Compile Include="Bitmap.cs" />
     <Compile Include="Display.cs" />
     <Compile Include="Stars3D.cs" />
+    <Compile Include="RenderContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />

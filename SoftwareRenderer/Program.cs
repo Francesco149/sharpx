@@ -11,7 +11,7 @@ namespace SoftwareRenderer
         public static void Main(string[] args)
         {
             Display display = new Display();
-            Bitmap target = display.FrameBuffer;
+            RenderContext target = display.FrameBuffer;
             long previousTime = DateTime.UtcNow.Ticks;
             Stars3D stars = new Stars3D(4096, 64, 20);
 
@@ -21,7 +21,16 @@ namespace SoftwareRenderer
                                       / 10000000.0);
                 previousTime = currentTime;
 
-                stars.UpdateAndRender(target, delta);
+                //stars.UpdateAndRender(target, delta);
+                target.Clear(0x00);
+
+                for (int j = 100; j < 200; ++j)
+                {
+                    target.DrawScanBuffer(j, 300 - j, 300 + j);
+                }
+
+                target.FillShape(100, 200);
+
                 display.SwapBuffers();
             };
 

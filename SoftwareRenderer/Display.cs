@@ -9,16 +9,16 @@ namespace SoftwareRenderer
 {
     public class Display : GameWindow
     {
-        protected Bitmap frameBuffer;
+        protected RenderContext frameBuffer;
         protected byte[] displayComponents;
 
-        public Bitmap FrameBuffer { get { return frameBuffer; } }
+        public RenderContext FrameBuffer { get { return frameBuffer; } }
 
         public Display()
             : base(800, 600, GraphicsMode.Default, "opentk",
                    GameWindowFlags.FixedWindow)
         {
-            frameBuffer = new Bitmap(Width, Height);
+            frameBuffer = new RenderContext(Width, Height);
             displayComponents = new byte[Width * Height * 3];
             frameBuffer.Clear(0);
             frameBuffer.DrawPixel(100, 100, 0, 0, 0, 0xFF);
