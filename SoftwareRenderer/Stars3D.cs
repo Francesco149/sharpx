@@ -2,12 +2,16 @@
 // See the attached UNLICENSE or http://unlicense.org/
 
 using System;
+using OpenTK;
 
 namespace SoftwareRenderer
 {
     public class Stars3D
     {
-        static Random rng = new Random();
+        static readonly float tanHalfFOV =
+            MathHelper.DegreesToRadians(70.0f / 2);
+
+        static readonly Random rng = new Random();
 
         protected readonly float spread;
         protected readonly float speed;
@@ -54,8 +58,10 @@ namespace SoftwareRenderer
                     InitStar(i);
                 }
 
-                int x = (int)((starX[i]/starZ[i]) * halfWidth + halfWidth);
-                int y = (int)((starY[i]/starZ[i]) * halfHeight + halfHeight);
+                int x = (int)((starX[i]/(starZ[i]*tanHalfFOV))
+                              * halfWidth + halfWidth);
+                int y = (int)((starY[i]/(starZ[i]*tanHalfFOV))
+                              * halfHeight + halfHeight);
 
                 if (x < 0 || x >= target.Width ||
                     y < 0 || y >= target.Height)
