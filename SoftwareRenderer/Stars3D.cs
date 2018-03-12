@@ -58,9 +58,9 @@ namespace SoftwareRenderer
                     InitStar(i);
                 }
 
-                int x = (int)((starX[i]/(starZ[i]*tanHalfFOV))
+                int x = (int)((starX[i] / (starZ[i] * tanHalfFOV))
                               * halfWidth + halfWidth);
-                int y = (int)((starY[i]/(starZ[i]*tanHalfFOV))
+                int y = (int)((starY[i] / (starZ[i] * tanHalfFOV))
                               * halfHeight + halfHeight);
 
                 if (x < 0 || x >= target.Width ||
