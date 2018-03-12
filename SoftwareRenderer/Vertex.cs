@@ -12,9 +12,9 @@ namespace SoftwareRenderer
         public float X { get { return pos.X; } }
         public float Y { get { return pos.Y; } }
 
-        public Vertex(float x, float y)
+        public Vertex(float x, float y, float z)
         {
-            pos = new Vector4(x, y, 0, 1);
+            pos = new Vector4(x, y, z, 1);
         }
 
         public Vertex(Vector4 pos)
@@ -25,6 +25,13 @@ namespace SoftwareRenderer
         public Vertex Transform(Matrix4 transform)
         {
             return new Vertex(Vector4.Transform(pos, transform));
+        }
+
+        public Vertex PerspectiveDivide()
+        {
+            return new Vertex(
+                new Vector4(pos.X / pos.W, pos.Y / pos.W, pos.Z / pos.W, pos.W)
+            );
         }
 
         public float TriangleAreaTimesTwo(Vertex b, Vertex c)

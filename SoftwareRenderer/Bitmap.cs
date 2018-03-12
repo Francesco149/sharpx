@@ -29,7 +29,6 @@ namespace SoftwareRenderer
 
         public void DrawPixel(int x, int y, byte a, byte b, byte g, byte r)
         {
-            y = height - y - 1; // flip y because OpenGL flips textures
             int index = (x + y * width) * 4;
             components[index] = a;
             components[index + 1] = b;

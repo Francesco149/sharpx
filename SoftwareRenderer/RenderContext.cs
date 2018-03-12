@@ -1,6 +1,8 @@
 ﻿// This is free and unencumbered software released into the public domain.
 // See the attached UNLICENSE or http://unlicense.org/
 
+using OpenTK;
+
 namespace SoftwareRenderer
 {
     public class RenderContext : Bitmap
@@ -61,9 +63,15 @@ namespace SoftwareRenderer
 
         public void FillTriangle(Vertex v1, Vertex v2, Vertex v3)
         {
-            Vertex minYVert = v1;
-            Vertex midYVert = v2;
-            Vertex maxYVert = v3;
+            Matrix4 screenSpaceTransform =
+                Matrix4Utils.InitScreenSpaceTransform(Width / 2, Height / 2);
+
+            Vertex minYVert = v1.Transform(screenSpaceTransform)
+                                .PerspectiveDivide();
+            Vertex midYVert = v2.Transform(screenSpaceTransform)
+                                .PerspectiveDivide();
+            Vertex maxYVert = v3.Transform(screenSpaceTransform)
+                                .PerspectiveDivide();
 
             if (maxYVert.Y < midYVert.Y)
             {

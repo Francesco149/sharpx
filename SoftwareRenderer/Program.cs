@@ -12,12 +12,20 @@ namespace SoftwareRenderer
         {
             Display display = new Display();
             RenderContext target = display.FrameBuffer;
-            long previousTime = DateTime.UtcNow.Ticks;
             Stars3D stars = new Stars3D(3, 64, 4);
 
-            Vertex minYVert = new Vertex(100, 100);
-            Vertex midYVert = new Vertex(150, 200);
-            Vertex maxYVert = new Vertex(80, 300);
+            Vertex minYVert = new Vertex(-1, -1, 0);
+            Vertex midYVert = new Vertex(0, 1, 0);
+            Vertex maxYVert = new Vertex(1, -1, 0);
+
+            Matrix4 projection =
+               Matrix4.CreatePerspectiveFieldOfView(
+                    MathHelper.DegreesToRadians(70.0f),
+                    (float)target.Width / target.Height,
+                    0.1f, 1000.0f);
+
+            float rotCounter = 0;
+            long previousTime = DateTime.UtcNow.Ticks;
 
             display.UpdateFrame += delegate (object s, FrameEventArgs e)
             {
@@ -26,18 +34,17 @@ namespace SoftwareRenderer
                                       / 10000000.0);
                 previousTime = currentTime;
 
-                stars.UpdateAndRender(target, delta);
-                //target.Clear(0x00);
+                //stars.UpdateAndRender(target, delta);
 
-                //for (int j = 100; j < 200; ++j)
-                //{
-                //    target.DrawScanBuffer(j, 300 - j, 300 + j);
-                //}
+                rotCounter += delta;
+                Matrix4 translation = Matrix4.CreateTranslation(0, 0, 3);
+                Matrix4 rotation = Matrix4.CreateRotationY(rotCounter);
+                Matrix4 transform = rotation * translation * projection;
 
-                //target.FillTriangle(maxYVert, midYVert, minYVert);
-
-                //target.ScanConvertTriangle(minYVert, midYVert, maxYVert, 0);
-                //target.FillShape(100, 300);
+                target.Clear(0x00);
+                target.FillTriangle(maxYVert.Transform(transform),
+                                    midYVert.Transform(transform),
+                                    minYVert.Transform(transform));
 
                 display.SwapBuffers();
             };
