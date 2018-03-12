@@ -43,6 +43,7 @@
     <Compile Include="RenderContext.cs" />
     <Compile Include="Vertex.cs" />
     <Compile Include="Matrix4Utils.cs" />
+    <Compile Include="Edge.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
