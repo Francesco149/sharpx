@@ -1,6 +1,7 @@
 ﻿// This is free and unencumbered software released into the public domain.
 // See the attached UNLICENSE or http://unlicense.org/
 
+using System;
 using OpenTK;
 
 namespace SoftwareRenderer
@@ -38,25 +39,26 @@ namespace SoftwareRenderer
         protected void ScanConvertLine(Vertex minYVert, Vertex maxYVert,
                                       int whichSide)
         {
-            int yStart = (int)minYVert.Y;
-            int yEnd = (int)maxYVert.Y;
-            int xStart = (int)minYVert.X;
-            int xEnd = (int)maxYVert.X;
+            int yStart = (int)Math.Ceiling(minYVert.Y);
+            int yEnd = (int)Math.Ceiling(maxYVert.Y);
+            int xStart = (int)Math.Ceiling(minYVert.X);
+            int xEnd = (int)Math.Ceiling(maxYVert.X);
 
-            int yDist = yEnd - yStart;
-            int xDist = xEnd - xStart;
+            float yDist = maxYVert.Y - minYVert.Y;
+            float xDist = maxYVert.X - minYVert.X;
 
             if (yDist <= 0)
             {
                 return;
             }
 
-            float xStep = (float)xDist / yDist;
-            float curX = xStart;
+            float xStep = xDist / yDist;
+            float yPrestep = yStart - minYVert.Y;
+            float curX = minYVert.X + yPrestep * xStep;
 
             for (int j = yStart; j < yEnd; ++j)
             {
-                scanBuffer[j * 2 + whichSide] = (int)curX;
+                scanBuffer[j * 2 + whichSide] = (int)Math.Ceiling(curX);
                 curX += xStep;
             }
         }
@@ -98,7 +100,8 @@ namespace SoftwareRenderer
             int handedness = area >= 0 ? 1 : 0;
 
             ScanConvertTriangle(minYVert, midYVert, maxYVert, handedness);
-            FillShape((int)minYVert.Y, (int)maxYVert.Y);
+            FillShape((int)Math.Ceiling(minYVert.Y),
+                      (int)Math.Ceiling(maxYVert.Y));
         }
 
         public void ScanConvertTriangle(Vertex minYVert, Vertex midYVert,
