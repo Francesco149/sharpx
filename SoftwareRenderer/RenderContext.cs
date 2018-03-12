@@ -59,6 +59,40 @@ namespace SoftwareRenderer
             }
         }
 
+        public void FillTriangle(Vertex v1, Vertex v2, Vertex v3)
+        {
+            Vertex minYVert = v1;
+            Vertex midYVert = v2;
+            Vertex maxYVert = v3;
+
+            if (maxYVert.Y < midYVert.Y)
+            {
+                Vertex tmp = maxYVert;
+                maxYVert = midYVert;
+                midYVert = tmp;
+            }
+
+            if (midYVert.Y < minYVert.Y)
+            {
+                Vertex tmp = midYVert;
+                midYVert = minYVert;
+                minYVert = tmp;
+            }
+
+            if (maxYVert.Y < midYVert.Y)
+            {
+                Vertex tmp = maxYVert;
+                maxYVert = midYVert;
+                midYVert = tmp;
+            }
+
+            float area = minYVert.TriangleArea(maxYVert, midYVert);
+            int handedness = area >= 0 ? 1 : 0;
+
+            ScanConvertTriangle(minYVert, midYVert, maxYVert, handedness);
+            FillShape((int)minYVert.Y, (int)maxYVert.Y);
+        }
+
         public void ScanConvertTriangle(Vertex minYVert, Vertex midYVert,
                                         Vertex maxYVert, int handedness)
         {

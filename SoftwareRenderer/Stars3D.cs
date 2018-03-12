@@ -42,12 +42,18 @@ namespace SoftwareRenderer
             starZ[i] = ((float)rng.NextDouble() + 0.00001f) * spread;
         }
 
-        public void UpdateAndRender(Bitmap target, float delta)
+        public void UpdateAndRender(RenderContext target, float delta)
         {
             target.Clear(0x00);
 
             float halfWidth = target.Width / 2.0f;
             float halfHeight = target.Height / 2.0f;
+            int triangleBuilderCounter = 0;
+
+            int x1 = 0;
+            int y1 = 0;
+            int x2 = 0;
+            int y2 = 0;
 
             for (int i = 0; i < starX.Length; ++i)
             {
@@ -70,7 +76,32 @@ namespace SoftwareRenderer
                     continue;
                 }
 
-                target.DrawPixel(x, y, 0xFF, 0xFF, 0xFF, 0xFF);
+                //target.DrawPixel(x, y, 0xFF, 0xFF, 0xFF, 0xFF);
+
+                ++triangleBuilderCounter;
+
+                switch (triangleBuilderCounter)
+                {
+                    case 1:
+                        x1 = x;
+                        y1 = y;
+                        break;
+
+                    case 2:
+                        x2 = x;
+                        y2 = y;
+                        break;
+
+                    case 3:
+                        triangleBuilderCounter = 0;
+
+                        Vertex v1 = new Vertex(x1, y1);
+                        Vertex v2 = new Vertex(x2, y2);
+                        Vertex v3 = new Vertex(x, y);
+
+                        target.FillTriangle(v1, v2, v3);
+                        break;
+                }
             }
         }
     }
