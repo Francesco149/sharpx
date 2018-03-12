@@ -1,4 +1,7 @@
-﻿using OpenTK;
+﻿// This is free and unencumbered software released into the public domain.
+// See the attached UNLICENSE or http://unlicense.org/
+
+using OpenTK;
 
 namespace SoftwareRenderer
 {
