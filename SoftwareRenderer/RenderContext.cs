@@ -32,5 +32,39 @@ namespace SoftwareRenderer
                 }
             }
         }
+
+        protected void ScanConvertLine(Vertex minYVert, Vertex maxYVert,
+                                      int whichSide)
+        {
+            int yStart = (int)minYVert.Y;
+            int yEnd = (int)maxYVert.Y;
+            int xStart = (int)minYVert.X;
+            int xEnd = (int)maxYVert.X;
+
+            int yDist = yEnd - yStart;
+            int xDist = xEnd - xStart;
+
+            if (yDist <= 0)
+            {
+                return;
+            }
+
+            float xStep = (float)xDist / yDist;
+            float curX = xStart;
+
+            for (int j = yStart; j < yEnd; ++j)
+            {
+                scanBuffer[j * 2 + whichSide] = (int)curX;
+                curX += xStep;
+            }
+        }
+
+        public void ScanConvertTriangle(Vertex minYVert, Vertex midYVert,
+                                        Vertex maxYVert, int handedness)
+        {
+            ScanConvertLine(minYVert, maxYVert, 0 + handedness);
+            ScanConvertLine(minYVert, midYVert, 1 - handedness);
+            ScanConvertLine(midYVert, maxYVert, 1 - handedness);
+        }
     }
 }

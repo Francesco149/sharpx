@@ -41,6 +41,7 @@
     <Compile Include="Display.cs" />
     <Compile Include="Stars3D.cs" />
     <Compile Include="RenderContext.cs" />
+    <Compile Include="Vertex.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />
