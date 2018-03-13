@@ -74,11 +74,18 @@ namespace SoftwareRenderer
 
         public void CopyToByteArray(byte[] dest)
         {
-            for (int i = 0; i < width * height; ++i)
+            for (int j = 0; j < height; ++j)
             {
-                dest[i * 3] = components[i * 4 + 1];
-                dest[i * 3 + 1] = components[i * 4 + 2];
-                dest[i * 3 + 2] = components[i * 4 + 3];
+                for (int i = 0; i < width; ++i)
+                {
+                    // OpenGL flips the frame buffer vertically
+                    int sourceIndex = j * width + i;
+                    int destIndex = (height - j - 1) * width + i;
+
+                    dest[destIndex * 3] = components[sourceIndex * 4 + 1];
+                    dest[destIndex * 3 + 1] = components[sourceIndex * 4 + 2];
+                    dest[destIndex * 3 + 2] = components[sourceIndex * 4 + 3];
+                }
             }
         }
     }

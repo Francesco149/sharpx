@@ -10,6 +10,7 @@ namespace SoftwareRenderer
         protected float[] texCoordX;
         protected float[] texCoordY;
         protected float[] oneOverZ;
+        protected float[] depth;
 
         protected float texCoordXXStep;
         protected float texCoordXYStep;
@@ -17,10 +18,13 @@ namespace SoftwareRenderer
         protected float texCoordYYStep;
         protected float oneOverZXStep;
         protected float oneOverZYStep;
+        protected float depthXStep;
+        protected float depthYStep;
 
         public float[] TexCoordX { get { return texCoordX; } }
         public float[] TexCoordY { get { return texCoordY; } }
         public float[] OneOverZ { get { return oneOverZ; } }
+        public float[] Depth { get { return depth; } }
 
         public float TexCoordXXStep { get { return texCoordXXStep; } }
         public float TexCoordXYStep { get { return texCoordXYStep; } }
@@ -28,6 +32,8 @@ namespace SoftwareRenderer
         public float TexCoordYYStep { get { return texCoordYYStep; } }
         public float OneOverZXStep { get { return oneOverZXStep; } }
         public float OneOverZYStep { get { return oneOverZYStep; } }
+        public float DepthXStep { get { return depthXStep; } }
+        public float DepthYStep { get { return depthYStep; } }
 
         protected float CalcXStep(float[] values, Vertex minYVert,
                                   Vertex midYVert, Vertex maxYVert,
@@ -54,6 +60,7 @@ namespace SoftwareRenderer
             texCoordX = new float[3];
             texCoordY = new float[3];
             oneOverZ = new float[3];
+            depth = new float[3];
 
             oneOverZ[0] = 1.0f / minYVert.Position.W;
             oneOverZ[1] = 1.0f / midYVert.Position.W;
@@ -66,6 +73,10 @@ namespace SoftwareRenderer
             texCoordY[0] = minYVert.TexCoords.Y * oneOverZ[0];
             texCoordY[1] = midYVert.TexCoords.Y * oneOverZ[1];
             texCoordY[2] = maxYVert.TexCoords.Y * oneOverZ[2];
+
+            depth[0] = minYVert.Position.Z;
+            depth[1] = midYVert.Position.Z;
+            depth[2] = maxYVert.Position.Z;
 
             float oneOverdX =
                 1.0f /
@@ -88,6 +99,11 @@ namespace SoftwareRenderer
                 CalcXStep(oneOverZ, minYVert, midYVert, maxYVert, oneOverdX);
             oneOverZYStep =
                 CalcYStep(oneOverZ, minYVert, midYVert, maxYVert, oneOverdY);
+
+            depthXStep =
+                CalcXStep(depth, minYVert, midYVert, maxYVert, oneOverdX);
+            depthYStep =
+                CalcYStep(depth, minYVert, midYVert, maxYVert, oneOverdY);
         }
     }
 }

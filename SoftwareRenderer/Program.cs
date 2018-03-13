@@ -15,7 +15,7 @@ namespace SoftwareRenderer
             Stars3D stars = new Stars3D(3, 64, 4);
 
             Bitmap texture = new Bitmap("./res/bricks.jpg");
-            Mesh mesh = new Mesh("./res/icosphere.obj");
+            Mesh mesh = new Mesh("./res/monkey0.obj");
 
             Vertex minYVert = new Vertex(new Vector4(-1, -1, 0, 1),
                                          new Vector4(0, 0, 0, 0));
@@ -25,7 +25,7 @@ namespace SoftwareRenderer
                                          new Vector4(1, 0, 0, 0));
 
             Matrix4 projection =
-               Matrix4.CreatePerspectiveFieldOfView(
+               Matrix4Utils.InitPerspective(
                     MathHelper.DegreesToRadians(70.0f),
                     (float)target.Width / target.Height,
                     0.1f, 1000.0f);
@@ -45,11 +45,11 @@ namespace SoftwareRenderer
                 rotCounter += delta;
                 Matrix4 translation = Matrix4.CreateTranslation(0, 0, 3);
                 Matrix4 rotation = Matrix4.CreateRotationX(rotCounter) *
-                                   Matrix4.CreateRotationY(rotCounter) *
                                    Matrix4.CreateRotationZ(rotCounter);
                 Matrix4 transform = rotation * translation * projection;
 
                 target.Clear(0x00);
+                target.ClearDepthBuffer();
                 target.DrawMesh(mesh, transform, texture);
                 //target.FillTriangle(maxYVert.Transform(transform),
                 //midYVert.Transform(transform),

@@ -8,10 +8,20 @@ namespace SoftwareRenderer
 {
     public class RenderContext : Bitmap
     {
+        protected float[] zBuffer;
+
         public RenderContext(int width, int height)
             : base(width, height)
         {
+            zBuffer = new float[width * height];
+        }
 
+        public void ClearDepthBuffer()
+        {
+            for (int i = 0; i < zBuffer.Length; ++i)
+            {
+                zBuffer[i] = float.MaxValue;
+            }
         }
 
         public void DrawMesh(Mesh mesh, Matrix4 transform, Bitmap texture)
@@ -119,6 +129,7 @@ namespace SoftwareRenderer
             float texCoordXXStep = (right.TexCoordX - left.TexCoordX) / xDist;
             float texCoordYXStep = (right.TexCoordY - left.TexCoordY) / xDist;
             float oneOverZXStep = (right.OneOverZ - left.OneOverZ) / xDist;
+            float depthXStep = (right.Depth - left.Depth) / xDist;
 
             float texCoordX =
                 left.TexCoordX + texCoordXXStep * xPrestep;
@@ -126,17 +137,28 @@ namespace SoftwareRenderer
                 left.TexCoordY + texCoordYXStep * xPrestep;
             float oneOverZ =
                 left.OneOverZ + oneOverZXStep * xPrestep;
+            float depth =
+                left.Depth + depthXStep * xPrestep;
 
             for (int i = xMin; i < xMax; ++i)
             {
-                float z = 1.0f / oneOverZ;
-                int srcX = (int)(texCoordX * z * (texture.Width - 1) + 0.5f);
-                int srcY = (int)(texCoordY * z * (texture.Height - 1) + 0.5f);
+                int index = i + j * Width;
+                if (depth < zBuffer[index])
+                {
+                    zBuffer[index] = depth;
+                    float z = 1.0f / oneOverZ;
+                    int srcX =
+                        (int)(texCoordX * z * (texture.Width - 1) + 0.5f);
+                    int srcY =
+                        (int)(texCoordY * z * (texture.Height - 1) + 0.5f);
 
-                CopyPixel(i, j, srcX, srcY, texture);
+                    CopyPixel(i, j, srcX, srcY, texture);
+                }
+
                 oneOverZ += oneOverZXStep;
                 texCoordX += texCoordXXStep;
                 texCoordY += texCoordYXStep;
+                depth += depthXStep;
             }
         }
     }
