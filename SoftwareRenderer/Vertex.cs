@@ -12,6 +12,7 @@ namespace SoftwareRenderer
 
         public float X { get { return pos.X; } }
         public float Y { get { return pos.Y; } }
+        public Vector4 Position { get { return pos; } }
         public Vector4 TexCoords { get { return texCoords; } }
 
         public Vertex(Vector4 pos, Vector4 texCoords)

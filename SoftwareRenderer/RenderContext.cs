@@ -63,13 +63,12 @@ namespace SoftwareRenderer
             Edge topToMiddle = new Edge(gradients, minYVert, midYVert, 0);
             Edge middleToBottom = new Edge(gradients, midYVert, maxYVert, 1);
 
-            ScanEdges(gradients, topToBottom, topToMiddle, handedness, texture);
-            ScanEdges(gradients, topToBottom, middleToBottom, handedness,
-                      texture);
+            ScanEdges(topToBottom, topToMiddle, handedness, texture);
+            ScanEdges(topToBottom, middleToBottom, handedness, texture);
         }
 
-        protected void ScanEdges(Gradients gradients, Edge a, Edge b,
-                                 bool handedness, Bitmap texture)
+        protected void ScanEdges(Edge a, Edge b, bool handedness,
+                                 Bitmap texture)
         {
             Edge left = a;
             Edge right = b;
@@ -86,37 +85,41 @@ namespace SoftwareRenderer
 
             for (int j = yStart; j < yEnd; ++j)
             {
-                DrawScanLine(gradients, left, right, j, texture);
+                DrawScanLine(left, right, j, texture);
                 left.Step();
                 right.Step();
             }
         }
 
-        protected void DrawScanLine(Gradients gradients, Edge left, Edge right,
-                                    int j, Bitmap texture)
+        protected void DrawScanLine(Edge left, Edge right, int j,
+                                    Bitmap texture)
         {
             int xMin = (int)Math.Ceiling(left.X);
             int xMax = (int)Math.Ceiling(right.X);
             float xPrestep = xMin - left.X;
 
+            float xDist = right.X - left.X;
+            float texCoordXXStep = (right.TexCoordX - left.TexCoordX) / xDist;
+            float texCoordYXStep = (right.TexCoordY - left.TexCoordY) / xDist;
+            float oneOverZXStep = (right.OneOverZ - left.OneOverZ) / xDist;
+
             float texCoordX =
-                left.TexCoordX + gradients.TexCoordXXStep * xPrestep;
+                left.TexCoordX + texCoordXXStep * xPrestep;
             float texCoordY =
-                left.TexCoordY + gradients.TexCoordYXStep * xPrestep;
+                left.TexCoordY + texCoordYXStep * xPrestep;
+            float oneOverZ =
+                left.OneOverZ + oneOverZXStep * xPrestep;
 
             for (int i = xMin; i < xMax; ++i)
             {
-                //byte r = (byte)(color.X * 255 + 0.5f);
-                //byte g = (byte)(color.Y * 255 + 0.5f);
-                //byte b = (byte)(color.Z * 255 + 0.5f);
-
-                //DrawPixel(i, j, 0xFF, b, g, r);
-                int srcX = (int)(texCoordX * (texture.Width - 1) + 0.5f);
-                int srcY = (int)(texCoordY * (texture.Height - 1) + 0.5f);
+                float z = 1.0f / oneOverZ;
+                int srcX = (int)(texCoordX * z * (texture.Width - 1) + 0.5f);
+                int srcY = (int)(texCoordY * z * (texture.Height - 1) + 0.5f);
 
                 CopyPixel(i, j, srcX, srcY, texture);
-                texCoordX += gradients.TexCoordXXStep;
-                texCoordY += gradients.TexCoordYXStep;
+                oneOverZ += oneOverZXStep;
+                texCoordX += texCoordXXStep;
+                texCoordY += texCoordYXStep;
             }
         }
     }

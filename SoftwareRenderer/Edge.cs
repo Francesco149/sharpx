@@ -16,12 +16,15 @@ namespace SoftwareRenderer
         protected float texCoordXStep;
         protected float texCoordY;
         protected float texCoordYStep;
+        protected float oneOverZ;
+        protected float oneOverZStep;
 
         public float X { get { return x; } }
         public int YStart { get { return yStart; } }
         public int YEnd { get { return yEnd; } }
         public float TexCoordX { get { return texCoordX; } }
         public float TexCoordY { get { return texCoordY; } }
+        public float OneOverZ { get { return oneOverZ; } }
 
         public Edge(Gradients gradients, Vertex minYVert, Vertex maxYVert,
                    int minYVertIndex)
@@ -48,6 +51,12 @@ namespace SoftwareRenderer
                         gradients.TexCoordYXStep * xPrestep;
             texCoordYStep = gradients.TexCoordYYStep +
                             gradients.TexCoordYXStep * xStep;
+
+            oneOverZ = gradients.OneOverZ[minYVertIndex] +
+                       gradients.OneOverZYStep * yPrestep +
+                       gradients.OneOverZXStep * xPrestep;
+            oneOverZStep = gradients.OneOverZYStep +
+                           gradients.OneOverZXStep * xStep;
         }
 
         public void Step()
@@ -55,6 +64,7 @@ namespace SoftwareRenderer
             x += xStep;
             texCoordX += texCoordXStep;
             texCoordY += texCoordYStep;
+            oneOverZ += oneOverZStep;
         }
     }
 }

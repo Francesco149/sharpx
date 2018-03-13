@@ -54,7 +54,9 @@ namespace SoftwareRenderer
 
                 rotCounter += delta;
                 Matrix4 translation = Matrix4.CreateTranslation(0, 0, 3);
-                Matrix4 rotation = Matrix4.CreateRotationY(rotCounter);
+                Matrix4 rotation = Matrix4.CreateRotationX(rotCounter) *
+                                   Matrix4.CreateRotationY(rotCounter) *
+                                   Matrix4.CreateRotationZ(rotCounter);
                 Matrix4 transform = rotation * translation * projection;
 
                 target.Clear(0x00);
