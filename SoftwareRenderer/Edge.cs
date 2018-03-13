@@ -2,7 +2,6 @@
 // See the attached UNLICENSE or http://unlicense.org/
 
 using System;
-using OpenTK;
 
 namespace SoftwareRenderer
 {
