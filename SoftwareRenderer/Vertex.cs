@@ -8,28 +8,28 @@ namespace SoftwareRenderer
     public class Vertex
     {
         protected Vector4 pos;
-        protected Vector4 color;
+        protected Vector4 texCoords;
 
         public float X { get { return pos.X; } }
         public float Y { get { return pos.Y; } }
-        public Vector4 Color { get { return color; } }
+        public Vector4 TexCoords { get { return texCoords; } }
 
-        public Vertex(Vector4 pos, Vector4 color)
+        public Vertex(Vector4 pos, Vector4 texCoords)
         {
             this.pos = pos;
-            this.color = color;
+            this.texCoords = texCoords;
         }
 
         public Vertex Transform(Matrix4 transform)
         {
-            return new Vertex(Vector4.Transform(pos, transform), color);
+            return new Vertex(Vector4.Transform(pos, transform), texCoords);
         }
 
         public Vertex PerspectiveDivide()
         {
             return new Vertex(
                 new Vector4(pos.X / pos.W, pos.Y / pos.W, pos.Z / pos.W, pos.W),
-                color
+                texCoords
             );
         }
 

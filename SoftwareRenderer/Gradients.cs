@@ -7,21 +7,34 @@ namespace SoftwareRenderer
 {
     public class Gradients
     {
-        protected Vector4[] color;
-        protected Vector4 colorXStep;
-        protected Vector4 colorYStep;
+        protected float[] texCoordX;
+        protected float[] texCoordY;
 
-        public Vector4[] Color { get { return color; } }
-        public Vector4 ColorXStep { get { return colorXStep; } }
-        public Vector4 ColorYStep { get { return colorYStep; } }
+        protected float texCoordXXStep;
+        protected float texCoordXYStep;
+        protected float texCoordYXStep;
+        protected float texCoordYYStep;
+
+        public float[] TexCoordX { get { return texCoordX; } }
+        public float[] TexCoordY { get { return texCoordY; } }
+
+        public float TexCoordXXStep { get { return texCoordXXStep; } }
+        public float TexCoordXYStep { get { return texCoordXYStep; } }
+        public float TexCoordYXStep { get { return texCoordYXStep; } }
+        public float TexCoordYYStep { get { return texCoordYYStep; } }
 
         public Gradients(Vertex minYVert, Vertex midYVert, Vertex maxYVert)
         {
-            color = new Vector4[3];
+            texCoordX = new float[3];
+            texCoordY = new float[3];
 
-            color[0] = minYVert.Color;
-            color[1] = midYVert.Color;
-            color[2] = maxYVert.Color;
+            texCoordX[0] = minYVert.TexCoords.X;
+            texCoordX[1] = midYVert.TexCoords.X;
+            texCoordX[2] = maxYVert.TexCoords.X;
+
+            texCoordY[0] = minYVert.TexCoords.Y;
+            texCoordY[1] = midYVert.TexCoords.Y;
+            texCoordY[2] = maxYVert.TexCoords.Y;
 
             float oneOverdX =
                 1.0f /
@@ -30,14 +43,24 @@ namespace SoftwareRenderer
 
             float oneOverdY = -oneOverdX;
 
-            colorXStep =
-                ((color[1] - color[2]) * (minYVert.Y - maxYVert.Y) -
-                 (color[0] - color[2]) * (midYVert.Y - maxYVert.Y))
+            texCoordXXStep =
+                ((texCoordX[1] - texCoordX[2]) * (minYVert.Y - maxYVert.Y) -
+                 (texCoordX[0] - texCoordX[2]) * (midYVert.Y - maxYVert.Y))
                 * oneOverdX;
 
-            colorYStep =
-                ((color[1] - color[2]) * (minYVert.X - maxYVert.X) -
-                 (color[0] - color[2]) * (midYVert.X - maxYVert.X))
+            texCoordXYStep =
+                ((texCoordX[1] - texCoordX[2]) * (minYVert.X - maxYVert.X) -
+                 (texCoordX[0] - texCoordX[2]) * (midYVert.X - maxYVert.X))
+                * oneOverdY;
+
+            texCoordYXStep =
+                ((texCoordY[1] - texCoordY[2]) * (minYVert.Y - maxYVert.Y) -
+                 (texCoordY[0] - texCoordY[2]) * (midYVert.Y - maxYVert.Y))
+                * oneOverdX;
+
+            texCoordYYStep =
+                ((texCoordY[1] - texCoordY[2]) * (minYVert.X - maxYVert.X) -
+                 (texCoordY[0] - texCoordY[2]) * (midYVert.X - maxYVert.X))
                 * oneOverdY;
         }
     }

@@ -45,6 +45,7 @@
     <Compile Include="Matrix4Utils.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Gradients.cs" />
+    <Compile Include="Random.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />

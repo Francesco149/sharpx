@@ -12,6 +12,8 @@ namespace SoftwareRenderer
         public int Width { get { return width; } }
         public int Height { get { return height; } }
 
+        public byte[] Components { get { return components; } }
+
         public Bitmap(int width, int height)
         {
             this.width = width;
@@ -34,6 +36,17 @@ namespace SoftwareRenderer
             components[index + 1] = b;
             components[index + 2] = g;
             components[index + 3] = r;
+        }
+
+        public void CopyPixel(int destX, int destY, int srcX, int srcY,
+                              Bitmap src)
+        {
+            int destIndex = (destX + destY * width) * 4;
+            int srcIndex = (srcX + srcY * src.Width) * 4;
+            components[destIndex] = src.Components[srcIndex];
+            components[destIndex + 1] = src.Components[srcIndex + 1];
+            components[destIndex + 2] = src.Components[srcIndex + 2];
+            components[destIndex + 3] = src.components[srcIndex + 3];
         }
 
         public void CopyToByteArray(byte[] dest)

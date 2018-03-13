@@ -12,13 +12,16 @@ namespace SoftwareRenderer
         protected float xStep;
         protected int yStart;
         protected int yEnd;
-        protected Vector4 color;
-        protected Vector4 colorStep;
+        protected float texCoordX;
+        protected float texCoordXStep;
+        protected float texCoordY;
+        protected float texCoordYStep;
 
         public float X { get { return x; } }
         public int YStart { get { return yStart; } }
         public int YEnd { get { return yEnd; } }
-        public Vector4 Color { get { return color; } }
+        public float TexCoordX { get { return texCoordX; } }
+        public float TexCoordY { get { return texCoordY; } }
 
         public Edge(Gradients gradients, Vertex minYVert, Vertex maxYVert,
                    int minYVertIndex)
@@ -34,16 +37,24 @@ namespace SoftwareRenderer
             x = minYVert.X + yPrestep * xStep;
             float xPrestep = x - minYVert.X;
 
-            color = gradients.Color[minYVertIndex] +
-                    gradients.ColorYStep * yPrestep +
-                    gradients.ColorXStep * xPrestep;
-            colorStep = gradients.ColorYStep + gradients.ColorXStep * xStep;
+            texCoordX = gradients.TexCoordX[minYVertIndex] +
+                        gradients.TexCoordXYStep * yPrestep +
+                        gradients.TexCoordXXStep * xPrestep;
+            texCoordXStep = gradients.TexCoordXYStep +
+                            gradients.TexCoordXXStep * xStep;
+
+            texCoordY = gradients.TexCoordY[minYVertIndex] +
+                        gradients.TexCoordYYStep * yPrestep +
+                        gradients.TexCoordYXStep * xPrestep;
+            texCoordYStep = gradients.TexCoordYYStep +
+                            gradients.TexCoordYXStep * xStep;
         }
 
         public void Step()
         {
             x += xStep;
-            color += colorStep;
+            texCoordX += texCoordXStep;
+            texCoordY += texCoordYStep;
         }
     }
 }

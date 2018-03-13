@@ -11,8 +11,6 @@ namespace SoftwareRenderer
         static readonly float tanHalfFOV =
           (float)Math.Tan(MathHelper.DegreesToRadians(70.0f / 2));
 
-        static readonly Random rng = new Random();
-
         protected readonly float spread;
         protected readonly float speed;
 
@@ -37,9 +35,9 @@ namespace SoftwareRenderer
 
         protected void InitStar(int i)
         {
-            starX[i] = 2 * ((float)rng.NextDouble() - 0.5f) * spread;
-            starY[i] = 2 * ((float)rng.NextDouble() - 0.5f) * spread;
-            starZ[i] = ((float)rng.NextDouble() + 0.00001f) * spread;
+            starX[i] = 2 * ((float)Random.NextDouble() - 0.5f) * spread;
+            starY[i] = 2 * ((float)Random.NextDouble() - 0.5f) * spread;
+            starZ[i] = ((float)Random.NextDouble() + 0.00001f) * spread;
         }
 
         public void UpdateAndRender(RenderContext target, float delta)
