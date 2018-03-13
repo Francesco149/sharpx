@@ -25,21 +25,20 @@ namespace SoftwareRenderer
             }
         }
 
-        public void ClipPolygonComponent(LinkedList<Vertex> vertices,
+        public void ClipPolygonComponent(List<Vertex> vertices,
                                          int componentIndex,
                                          float componentFactor,
-                                         LinkedList<Vertex> result)
+                                         List<Vertex> result)
         {
-            Vertex previousVertex = vertices.Last.Value;
+            Vertex previousVertex = vertices[vertices.Count - 1];
             float previousComponent =
                 previousVertex[componentIndex] * componentFactor;
             bool previousInside =
                 previousComponent <= previousVertex.Position.W;
 
-            LinkedListNode<Vertex> it = vertices.First;
-            while (it.Next != null)
+            foreach (Vertex it in vertices)
             {
-                Vertex currentVertex = it.Next.Value;
+                Vertex currentVertex = it;
                 float currentComponent =
                     currentVertex[componentIndex] * componentFactor;
                 bool currentInside =
@@ -52,12 +51,12 @@ namespace SoftwareRenderer
                         / ((previousVertex.Position.W - previousComponent) -
                            (currentVertex.Position.W - currentComponent));
 
-                    result.AddLast(previousVertex.Lerp(currentVertex, lerpAmt));
+                    result.Add(previousVertex.Lerp(currentVertex, lerpAmt));
                 }
 
                 if (currentInside)
                 {
-                    result.AddLast(currentVertex);
+                    result.Add(currentVertex);
                 }
 
                 previousVertex = currentVertex;
