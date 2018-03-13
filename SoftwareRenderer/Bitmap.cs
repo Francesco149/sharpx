@@ -1,6 +1,8 @@
 ﻿// This is free and unencumbered software released into the public domain.
 // See the attached UNLICENSE or http://unlicense.org/
 
+using System.Drawing;
+
 namespace SoftwareRenderer
 {
     public class Bitmap
@@ -19,6 +21,27 @@ namespace SoftwareRenderer
             this.width = width;
             this.height = height;
             components = new byte[width * height * 4];
+        }
+
+        public Bitmap(string fileName)
+        {
+            var image = new System.Drawing.Bitmap(fileName);
+            width = image.Width;
+            height = image.Height;
+            components = new byte[width * height * 4];
+
+            for (int j = 0; j < height; ++j)
+            {
+                for (int i = 0; i < width; ++i)
+                {
+                    Color pixel = image.GetPixel(i, j);
+
+                    components[(j * width + i) * 4] = pixel.A;
+                    components[(j * width + i) * 4 + 1] = pixel.B;
+                    components[(j * width + i) * 4 + 2] = pixel.G;
+                    components[(j * width + i) * 4 + 3] = pixel.R;
+                }
+            }
         }
 
         public void Clear(byte shade)

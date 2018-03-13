@@ -14,18 +14,8 @@ namespace SoftwareRenderer
             RenderContext target = display.FrameBuffer;
             Stars3D stars = new Stars3D(3, 64, 4);
 
-            Bitmap texture = new Bitmap(32, 32);
-            for (int j = 0; j < texture.Height; ++j)
-            {
-                for (int i = 0; i < texture.Width; ++i)
-                {
-                    texture.DrawPixel(i, j,
-                        (byte)(Random.NextDouble() * 255.0 + 0.5),
-                        (byte)(Random.NextDouble() * 255.0 + 0.5),
-                        (byte)(Random.NextDouble() * 255.0 + 0.5),
-                        (byte)(Random.NextDouble() * 255.0 + 0.5));
-                }
-            }
+            Bitmap texture = new Bitmap("./res/bricks.jpg");
+            Mesh mesh = new Mesh("./res/icosphere.obj");
 
             Vertex minYVert = new Vertex(new Vector4(-1, -1, 0, 1),
                                          new Vector4(0, 0, 0, 0));
@@ -60,10 +50,11 @@ namespace SoftwareRenderer
                 Matrix4 transform = rotation * translation * projection;
 
                 target.Clear(0x00);
-                target.FillTriangle(maxYVert.Transform(transform),
-                                    midYVert.Transform(transform),
-                                    minYVert.Transform(transform),
-                                    texture);
+                target.DrawMesh(mesh, transform, texture);
+                //target.FillTriangle(maxYVert.Transform(transform),
+                //midYVert.Transform(transform),
+                //minYVert.Transform(transform),
+                //texture);
 
                 display.SwapBuffers();
             };

@@ -33,6 +33,7 @@
     <Reference Include="OpenTK">
       <HintPath>..\packages\OpenTK.2.0.0\lib\net20\OpenTK.dll</HintPath>
     </Reference>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -46,6 +47,9 @@
     <Compile Include="Edge.cs" />
     <Compile Include="Gradients.cs" />
     <Compile Include="Random.cs" />
+    <Compile Include="OBJModel.cs" />
+    <Compile Include="IndexedModel.cs" />
+    <Compile Include="Mesh.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="OpenTK.dll.config" />

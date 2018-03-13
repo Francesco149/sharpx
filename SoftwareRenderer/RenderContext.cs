@@ -14,6 +14,18 @@ namespace SoftwareRenderer
 
         }
 
+        public void DrawMesh(Mesh mesh, Matrix4 transform, Bitmap texture)
+        {
+            for (int i = 0; i < mesh.Indices.Count; i += 3)
+            {
+                FillTriangle(
+                    mesh.Vertices[mesh.Indices[i]].Transform(transform),
+                    mesh.Vertices[mesh.Indices[i + 1]].Transform(transform),
+                    mesh.Vertices[mesh.Indices[i + 2]].Transform(transform),
+                    texture);
+            }
+        }
+
         public void FillTriangle(Vertex v1, Vertex v2, Vertex v3,
                                  Bitmap texture)
         {
@@ -26,6 +38,11 @@ namespace SoftwareRenderer
                                 .PerspectiveDivide();
             Vertex maxYVert = v3.Transform(screenSpaceTransform)
                                 .PerspectiveDivide();
+
+            if (minYVert.TriangleAreaTimesTwo(maxYVert, midYVert) >= 0)
+            {
+                return;
+            }
 
             if (maxYVert.Y < midYVert.Y)
             {
