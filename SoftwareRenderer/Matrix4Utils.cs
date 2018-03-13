@@ -15,7 +15,7 @@ namespace SoftwareRenderer
                 halfWidth, 0, 0, 0,
                 0, -halfHeight, 0, 0,
                 0, 0, 1, 0,
-                halfWidth, halfHeight, 0, 1
+                halfWidth - 0.5f, halfHeight - 0.5f, 0, 1
             );
         }
 

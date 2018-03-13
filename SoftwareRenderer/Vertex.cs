@@ -1,6 +1,7 @@
 ﻿// This is free and unencumbered software released into the public domain.
 // See the attached UNLICENSE or http://unlicense.org/
 
+using System;
 using OpenTK;
 
 namespace SoftwareRenderer
@@ -51,6 +52,14 @@ namespace SoftwareRenderer
                 Vector4.Lerp(pos, other.Position, lerpAmt),
                 Vector4.Lerp(texCoords, other.TexCoords, lerpAmt)
             );
+        }
+
+        public bool IsInsideViewFrustum()
+        {
+            return
+                Math.Abs(pos.X) <= Math.Abs(pos.W) &&
+                Math.Abs(pos.Y) <= Math.Abs(pos.W) &&
+                Math.Abs(pos.Z) <= Math.Abs(pos.W);
         }
 
         public float this[int index]

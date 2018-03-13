@@ -43,14 +43,17 @@ namespace SoftwareRenderer
                 //stars.UpdateAndRender(target, delta);
 
                 rotCounter += delta;
-                Matrix4 translation = Matrix4.CreateTranslation(0, 0, 3);
+                Matrix4 translation =
+                    Matrix4.CreateTranslation(
+                        0, 0, 3 - 3 * (float)Math.Sin(rotCounter)
+                    );
                 Matrix4 rotation = Matrix4.CreateRotationX(rotCounter) *
                                    Matrix4.CreateRotationZ(rotCounter);
                 Matrix4 transform = rotation * translation * projection;
 
                 target.Clear(0x00);
                 target.ClearDepthBuffer();
-                target.DrawMesh(mesh, transform, texture);
+                mesh.Draw(target, transform, texture);
                 //target.FillTriangle(maxYVert.Transform(transform),
                 //midYVert.Transform(transform),
                 //minYVert.Transform(transform),

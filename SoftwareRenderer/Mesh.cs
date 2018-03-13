@@ -2,6 +2,7 @@
 // See the attached UNLICENSE or http://unlicense.org/
 
 using System.Collections.Generic;
+using OpenTK;
 
 namespace SoftwareRenderer
 {
@@ -22,6 +23,19 @@ namespace SoftwareRenderer
             }
 
             Indices = model.Indices;
+        }
+
+        public void Draw(RenderContext context, Matrix4 transform,
+                         Bitmap texture)
+        {
+            for (int i = 0; i < Indices.Count; i += 3)
+            {
+                context.DrawTriangle(
+                    Vertices[Indices[i]].Transform(transform),
+                    Vertices[Indices[i + 1]].Transform(transform),
+                    Vertices[Indices[i + 2]].Transform(transform),
+                    texture);
+            }
         }
     }
 }

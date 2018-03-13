@@ -25,21 +25,69 @@ namespace SoftwareRenderer
             }
         }
 
-        public void ClipPolygonComponent(LinkedList<Vertex> vertices,
+        public void DrawTriangle(Vertex v1, Vertex v2, Vertex v3,
+                                 Bitmap texture)
+        {
+            if (v1.IsInsideViewFrustum() && v2.IsInsideViewFrustum() &&
+                v3.IsInsideViewFrustum())
+            {
+                FillTriangle(v1, v2, v3, texture);
+                return;
+            }
+
+            List<Vertex> vertices = new List<Vertex>();
+            List<Vertex> auxilliaryList = new List<Vertex>();
+
+            vertices.Add(v1);
+            vertices.Add(v2);
+            vertices.Add(v3);
+
+            if (ClipPolygonAxis(vertices, auxilliaryList, 0) &&
+                ClipPolygonAxis(vertices, auxilliaryList, 1) &&
+                ClipPolygonAxis(vertices, auxilliaryList, 2))
+            {
+                Vertex initialVertex = vertices[0];
+
+                for (int i = 1; i < vertices.Count - 1; ++i)
+                {
+                    FillTriangle(initialVertex, vertices[i], vertices[i + 1],
+                                 texture);
+                }
+            }
+        }
+
+        protected bool ClipPolygonAxis(List<Vertex> vertices,
+                                       List<Vertex> auxillaryList,
+                                       int componentIndex)
+        {
+            ClipPolygonComponent(vertices, componentIndex, 1, auxillaryList);
+            vertices.Clear();
+
+            if (auxillaryList.Count == 0)
+            {
+                return false;
+            }
+
+            ClipPolygonComponent(auxillaryList, componentIndex, -1, vertices);
+            auxillaryList.Clear();
+
+            return vertices.Count != 0;
+        }
+
+        public void ClipPolygonComponent(List<Vertex> vertices,
                                          int componentIndex,
                                          float componentFactor,
-                                         LinkedList<Vertex> result)
+                                         List<Vertex> result)
         {
-            Vertex previousVertex = vertices.Last.Value;
+            Vertex previousVertex = vertices[vertices.Count - 1];
             float previousComponent =
                 previousVertex[componentIndex] * componentFactor;
             bool previousInside =
                 previousComponent <= previousVertex.Position.W;
 
-            LinkedListNode<Vertex> it = vertices.First;
-            while (it.Next != null)
+            foreach (Vertex it in vertices)
             {
-                Vertex currentVertex = it.Next.Value;
+                Vertex currentVertex = it;
                 float currentComponent =
                     currentVertex[componentIndex] * componentFactor;
                 bool currentInside =
@@ -52,12 +100,12 @@ namespace SoftwareRenderer
                         / ((previousVertex.Position.W - previousComponent) -
                            (currentVertex.Position.W - currentComponent));
 
-                    result.AddLast(previousVertex.Lerp(currentVertex, lerpAmt));
+                    result.Add(previousVertex.Lerp(currentVertex, lerpAmt));
                 }
 
                 if (currentInside)
                 {
-                    result.AddLast(currentVertex);
+                    result.Add(currentVertex);
                 }
 
                 previousVertex = currentVertex;
@@ -66,19 +114,7 @@ namespace SoftwareRenderer
             }
         }
 
-        public void DrawMesh(Mesh mesh, Matrix4 transform, Bitmap texture)
-        {
-            for (int i = 0; i < mesh.Indices.Count; i += 3)
-            {
-                FillTriangle(
-                    mesh.Vertices[mesh.Indices[i]].Transform(transform),
-                    mesh.Vertices[mesh.Indices[i + 1]].Transform(transform),
-                    mesh.Vertices[mesh.Indices[i + 2]].Transform(transform),
-                    texture);
-            }
-        }
-
-        public void FillTriangle(Vertex v1, Vertex v2, Vertex v3,
+        protected void FillTriangle(Vertex v1, Vertex v2, Vertex v3,
                                  Bitmap texture)
         {
             Matrix4 screenSpaceTransform =
