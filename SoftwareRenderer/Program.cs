@@ -14,9 +14,12 @@ namespace SoftwareRenderer
             RenderContext target = display.FrameBuffer;
             Stars3D stars = new Stars3D(3, 64, 4);
 
-            Vertex minYVert = new Vertex(-1, -1, 0);
-            Vertex midYVert = new Vertex(0, 1, 0);
-            Vertex maxYVert = new Vertex(1, -1, 0);
+            Vertex minYVert = new Vertex(new Vector4(-1, -1, 0, 1),
+                                         new Vector4(1, 0, 0, 0));
+            Vertex midYVert = new Vertex(new Vector4(0, 1, 0, 1),
+                                         new Vector4(0, 1, 0, 0));
+            Vertex maxYVert = new Vertex(new Vector4(1, -1, 0, 1),
+                                         new Vector4(0, 0, 1, 0));
 
             Matrix4 projection =
                Matrix4.CreatePerspectiveFieldOfView(

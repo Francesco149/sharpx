@@ -56,15 +56,17 @@ namespace SoftwareRenderer
         protected void ScanTriangle(Vertex minYVert, Vertex midYVert,
                                 Vertex maxYVert, bool handedness)
         {
-            Edge topToBottom = new Edge(minYVert, maxYVert);
-            Edge topToMiddle = new Edge(minYVert, midYVert);
-            Edge middleToBottom = new Edge(midYVert, maxYVert);
+            Gradients gradients = new Gradients(minYVert, midYVert, maxYVert);
+            Edge topToBottom = new Edge(gradients, minYVert, maxYVert, 0);
+            Edge topToMiddle = new Edge(gradients, minYVert, midYVert, 0);
+            Edge middleToBottom = new Edge(gradients, midYVert, maxYVert, 1);
 
-            ScanEdges(topToBottom, topToMiddle, handedness);
-            ScanEdges(topToBottom, middleToBottom, handedness);
+            ScanEdges(gradients, topToBottom, topToMiddle, handedness);
+            ScanEdges(gradients, topToBottom, middleToBottom, handedness);
         }
 
-        protected void ScanEdges(Edge a, Edge b, bool handedness)
+        protected void ScanEdges(Gradients gradients, Edge a, Edge b,
+                                 bool handedness)
         {
             Edge left = a;
             Edge right = b;
@@ -81,20 +83,33 @@ namespace SoftwareRenderer
 
             for (int j = yStart; j < yEnd; ++j)
             {
-                DrawScanLine(left, right, j);
+                DrawScanLine(gradients, left, right, j);
                 left.Step();
                 right.Step();
             }
         }
 
-        protected void DrawScanLine(Edge left, Edge right, int j)
+        protected void DrawScanLine(Gradients gradients, Edge left, Edge right,
+                                    int j)
         {
             int xMin = (int)Math.Ceiling(left.X);
             int xMax = (int)Math.Ceiling(right.X);
+            float xPrestep = xMin - left.X;
+            Vector4 minColor = left.Color + gradients.ColorXStep * xPrestep;
+            Vector4 maxColor = right.Color + gradients.ColorXStep * xPrestep;
 
+            float lerpAmt = 0;
+            float lerpStep = 1.0f / (xMax - xMin);
             for (int i = xMin; i < xMax; ++i)
             {
-                DrawPixel(i, j, 0xFF, 0xFF, 0xFF, 0xFF);
+                Vector4 color = Vector4.Lerp(minColor, maxColor, lerpAmt);
+
+                byte r = (byte)(color.X * 255 + 0.5f);
+                byte g = (byte)(color.Y * 255 + 0.5f);
+                byte b = (byte)(color.Z * 255 + 0.5f);
+
+                DrawPixel(i, j, 0xFF, b, g, r);
+                lerpAmt += lerpStep;
             }
         }
     }
