@@ -131,14 +131,10 @@ namespace SoftwareRenderer
             float oneOverZXStep = (right.OneOverZ - left.OneOverZ) / xDist;
             float depthXStep = (right.Depth - left.Depth) / xDist;
 
-            float texCoordX =
-                left.TexCoordX + texCoordXXStep * xPrestep;
-            float texCoordY =
-                left.TexCoordY + texCoordYXStep * xPrestep;
-            float oneOverZ =
-                left.OneOverZ + oneOverZXStep * xPrestep;
-            float depth =
-                left.Depth + depthXStep * xPrestep;
+            float texCoordX = left.TexCoordX + texCoordXXStep * xPrestep;
+            float texCoordY = left.TexCoordY + texCoordYXStep * xPrestep;
+            float oneOverZ = left.OneOverZ + oneOverZXStep * xPrestep;
+            float depth = left.Depth + depthXStep * xPrestep;
 
             for (int i = xMin; i < xMax; ++i)
             {
