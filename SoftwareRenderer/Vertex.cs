@@ -44,5 +44,19 @@ namespace SoftwareRenderer
 
             return x1 * y2 - x2 * y1;
         }
+
+        public Vertex Lerp(Vertex other, float lerpAmt)
+        {
+            return new Vertex(
+                Vector4.Lerp(pos, other.Position, lerpAmt),
+                Vector4.Lerp(texCoords, other.TexCoords, lerpAmt)
+            );
+        }
+
+        public float this[int index]
+        {
+            get { return pos[index]; }
+            set { pos[index] = value; }
+        }
     }
 }

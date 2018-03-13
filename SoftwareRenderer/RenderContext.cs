@@ -2,6 +2,7 @@
 // See the attached UNLICENSE or http://unlicense.org/
 
 using System;
+using System.Collections.Generic;
 using OpenTK;
 
 namespace SoftwareRenderer
@@ -21,6 +22,47 @@ namespace SoftwareRenderer
             for (int i = 0; i < zBuffer.Length; ++i)
             {
                 zBuffer[i] = float.MaxValue;
+            }
+        }
+
+        public void ClipPolygonComponent(LinkedList<Vertex> vertices,
+                                         int componentIndex,
+                                         float componentFactor,
+                                         LinkedList<Vertex> result)
+        {
+            Vertex previousVertex = vertices.Last.Value;
+            float previousComponent =
+                previousVertex[componentIndex] * componentFactor;
+            bool previousInside =
+                previousComponent <= previousVertex.Position.W;
+
+            LinkedListNode<Vertex> it = vertices.First;
+            while (it.Next != null)
+            {
+                Vertex currentVertex = it.Next.Value;
+                float currentComponent =
+                    currentVertex[componentIndex] * componentFactor;
+                bool currentInside =
+                    currentComponent <= currentVertex.Position.W;
+
+                if (currentInside ^ previousInside)
+                {
+                    float lerpAmt =
+                        (previousVertex.Position.W - previousComponent)
+                        / ((previousVertex.Position.W - previousComponent) -
+                           (currentVertex.Position.W - currentComponent));
+
+                    result.AddLast(previousVertex.Lerp(currentVertex, lerpAmt));
+                }
+
+                if (currentInside)
+                {
+                    result.AddLast(currentVertex);
+                }
+
+                previousVertex = currentVertex;
+                previousComponent = currentComponent;
+                previousInside = currentInside;
             }
         }
 
