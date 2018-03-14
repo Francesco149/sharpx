@@ -33,8 +33,8 @@ public class Vertex
 
     public Vertex PerspectiveDivide()
     {
-        return
-            new Vertex(new Vector4(pos.Xyz / pos.W, pos.W), texCoords, normal);
+        var dividedPos = new Vector4(pos.Xyz / pos.W, pos.W);
+        return new Vertex(dividedPos, texCoords, normal);
     }
 
     public float TriangleAreaTimesTwo(Vertex b, Vertex c)
