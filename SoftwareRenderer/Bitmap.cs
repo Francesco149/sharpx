@@ -7,87 +7,82 @@ namespace SoftwareRenderer
 {
     public class Bitmap
     {
-        protected int width;
-        protected int height;
-        protected readonly byte[] components;
-
-        public int Width { get { return width; } }
-        public int Height { get { return height; } }
-
-        public byte[] Components { get { return components; } }
+        public int Width { get; }
+        public int Height { get; }
+        public byte[] Components { get; }
 
         public Bitmap(int width, int height)
         {
-            this.width = width;
-            this.height = height;
-            components = new byte[width * height * 4];
+            Width = width;
+            Height = height;
+            Components = new byte[width * height * 4];
         }
 
         public Bitmap(string fileName)
         {
             var image = new System.Drawing.Bitmap(fileName);
-            width = image.Width;
-            height = image.Height;
-            components = new byte[width * height * 4];
+            Width = image.Width;
+            Height = image.Height;
+            Components = new byte[Width * Height * 4];
 
-            for (int j = 0; j < height; ++j)
+            for (int j = 0; j < Height; ++j)
             {
-                for (int i = 0; i < width; ++i)
+                for (int i = 0; i < Width; ++i)
                 {
                     Color pixel = image.GetPixel(i, j);
 
-                    components[(j * width + i) * 4] = pixel.A;
-                    components[(j * width + i) * 4 + 1] = pixel.B;
-                    components[(j * width + i) * 4 + 2] = pixel.G;
-                    components[(j * width + i) * 4 + 3] = pixel.R;
+                    Components[(j * Width + i) * 4] = pixel.A;
+                    Components[(j * Width + i) * 4 + 1] = pixel.B;
+                    Components[(j * Width + i) * 4 + 2] = pixel.G;
+                    Components[(j * Width + i) * 4 + 3] = pixel.R;
                 }
             }
         }
 
         public void Clear(byte shade)
         {
-            for (int i = 0; i < components.Length; ++i)
+            for (int i = 0; i < Components.Length; ++i)
             {
-                components[i] = shade;
+                Components[i] = shade;
             }
         }
 
         public void DrawPixel(int x, int y, byte a, byte b, byte g, byte r)
         {
-            int index = (x + y * width) * 4;
-            components[index] = a;
-            components[index + 1] = b;
-            components[index + 2] = g;
-            components[index + 3] = r;
+            int index = (x + y * Width) * 4;
+            Components[index] = a;
+            Components[index + 1] = b;
+            Components[index + 2] = g;
+            Components[index + 3] = r;
         }
 
         public void CopyPixel(int destX, int destY, int srcX, int srcY,
                               Bitmap src, float lightAmt)
         {
-            int destIndex = (destX + destY * width) * 4;
+            int destIndex = (destX + destY * Width) * 4;
             int srcIndex = (srcX + srcY * src.Width) * 4;
-            components[destIndex] = src.Components[srcIndex];
-            components[destIndex + 1] =
+            Components[destIndex] = src.Components[srcIndex];
+            Components[destIndex + 1] =
                 (byte)(lightAmt * src.Components[srcIndex + 1]);
-            components[destIndex + 2] =
+            Components[destIndex + 2] =
                 (byte)(lightAmt * src.Components[srcIndex + 2]);
-            components[destIndex + 3] =
-                (byte)(lightAmt * src.components[srcIndex + 3]);
+            Components[destIndex + 3] =
+                (byte)(lightAmt * src.Components[srcIndex + 3]);
         }
 
         public void CopyToByteArray(byte[] dest)
         {
-            for (int j = 0; j < height; ++j)
+            for (int j = 0; j < Height; ++j)
             {
-                for (int i = 0; i < width; ++i)
+                for (int i = 0; i < Width; ++i)
                 {
                     // OpenGL flips the frame buffer vertically
-                    int sourceIndex = j * width + i;
-                    int destIndex = (height - j - 1) * width + i;
+                    int sourceIndex = j * Width + i;
+                    int destIndex = (Height - j - 1) * Width + i;
 
-                    dest[destIndex * 3] = components[sourceIndex * 4 + 1];
-                    dest[destIndex * 3 + 1] = components[sourceIndex * 4 + 2];
-                    dest[destIndex * 3 + 2] = components[sourceIndex * 4 + 3];
+                    dest[destIndex * 3] = Components[sourceIndex * 4 + 1];
+                    dest[destIndex * 3 + 1] = Components[sourceIndex * 4 + 2];
+                    dest[destIndex * 3 + 2] = Components[sourceIndex * 4 + 3];
                 }
             }
         }
