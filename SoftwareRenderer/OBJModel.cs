@@ -81,6 +81,16 @@ public class OBJModel
         return str.Split(cset, StringSplitOptions.RemoveEmptyEntries);
     }
 
+    protected float[] ParseFloats(string[] tokens, int start = 1, int n = 3)
+    {
+        float[] res = new float[n];
+
+        for (int i = 0; i < n; ++i)
+            res[i] = float.Parse(tokens[start + i]);
+
+        return res;
+    }
+
     protected void ParseLine(string line)
     {
         string[] tokens = SplitTrimEmpty(line);
@@ -88,21 +98,23 @@ public class OBJModel
         if (tokens.Length == 0 || tokens[0] == "#")
             return;
 
+        float[] v;
+
         switch (tokens[0])
         {
         case "v":
-            positions.Add(new Vector4(float.Parse(tokens[1]),
-                float.Parse(tokens[2]), float.Parse(tokens[3]), 1));
+            v = ParseFloats(tokens);
+            positions.Add(new Vector4(v[0], v[1], v[2], 1));
             break;
 
         case "vt":
-            texCoords.Add(new Vector4(float.Parse(tokens[1]),
-               float.Parse(tokens[2]), 0, 0));
+            v = ParseFloats(tokens, 1, 2);
+            texCoords.Add(new Vector4(v[0], v[1], 0, 0));
             break;
 
         case "vn":
-            normals.Add(new Vector4(float.Parse(tokens[1]),
-                float.Parse(tokens[2]), float.Parse(tokens[3]), 0));
+            v = ParseFloats(tokens);
+            normals.Add(new Vector4(v[0], v[1], v[2], 0));
             break;
 
         case "f":
