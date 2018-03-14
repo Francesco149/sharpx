@@ -17,7 +17,7 @@ namespace SoftwareRenderer
         public KeyboardState Input { get { return Keyboard.GetState(); } }
 
         public Display()
-            : base(800, 600, GraphicsMode.Default, "opentk",
+            : base(640, 480, GraphicsMode.Default, "opentk",
                    GameWindowFlags.FixedWindow)
         {
             frameBuffer = new RenderContext(Width, Height);
