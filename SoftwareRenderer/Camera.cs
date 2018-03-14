@@ -12,6 +12,9 @@ namespace SoftwareRenderer
         static readonly Vector4 Y_AXIS = new Vector4(0, 1, 0, 0);
         static readonly Vector4 Z_AXIS = new Vector4(0, 0, 1, 0);
 
+        const float SENS = 2.66f;
+        const float SPEED = 5.0f;
+
         protected Transform transform;
         protected Matrix4 projection;
 
@@ -40,29 +43,20 @@ namespace SoftwareRenderer
             }
         }
 
-        public void Update(KeyboardState input, float delta)
+        public void Update(KeyboardState input, float deltaTime)
         {
-            float sensitivityX = 2.66f * delta;
-            float sensitivityY = 2.0f * delta;
-            float movAmt = 5.0f * delta;
+            float dt = deltaTime;
+            Transform t = transform;
 
-            if (input.IsKeyDown(Key.W))
-                Move(transform.Rot * Z_AXIS, movAmt);
-            if (input.IsKeyDown(Key.S))
-                Move(transform.Rot * Z_AXIS, -movAmt);
-            if (input.IsKeyDown(Key.D))
-                Move(transform.Rot * X_AXIS, movAmt);
-            if (input.IsKeyDown(Key.A))
-                Move(transform.Rot * X_AXIS, -movAmt);
+            if (input.IsKeyDown(Key.W)) Move(t.Rot * Z_AXIS, SPEED * dt);
+            if (input.IsKeyDown(Key.S)) Move(t.Rot * Z_AXIS, -SPEED * dt);
+            if (input.IsKeyDown(Key.D)) Move(t.Rot * X_AXIS, SPEED * dt);
+            if (input.IsKeyDown(Key.A)) Move(t.Rot * X_AXIS, -SPEED * dt);
 
-            if (input.IsKeyUp(Key.Right))
-                Rotate(Y_AXIS, sensitivityX);
-            if (input.IsKeyUp(Key.Left))
-                Rotate(Y_AXIS, -sensitivityX);
-            if (input.IsKeyUp(Key.Down))
-                Rotate(transform.Rot * X_AXIS, sensitivityY);
-            if (input.IsKeyUp(Key.Up))
-                Rotate(transform.Rot * X_AXIS, -sensitivityY);
+            if (input.IsKeyDown(Key.Right)) Rotate(Y_AXIS, SENS * dt);
+            if (input.IsKeyDown(Key.Left)) Rotate(Y_AXIS, -SENS * dt);
+            if (input.IsKeyDown(Key.Down)) Rotate(t.Rot * X_AXIS, SENS * dt);
+            if (input.IsKeyDown(Key.Up)) Rotate(t.Rot * X_AXIS, -SENS * dt);
         }
 
         protected void Move(Vector4 dir, float amt)
@@ -73,7 +67,7 @@ namespace SoftwareRenderer
         protected void Rotate(Vector4 axis, float angle)
         {
             transform = transform.Rotate(
-                Quaternion.FromAxisAngle(new Vector3(axis), -angle)
+                Quaternion.FromAxisAngle(new Vector3(axis), angle)
             );
         }
     }
