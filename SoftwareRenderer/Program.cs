@@ -30,7 +30,6 @@ namespace SoftwareRenderer
                 )
             );
 
-            float rotCounter = 0;
             long previousTime = DateTime.UtcNow.Ticks;
 
             display.UpdateFrame += delegate (object s, FrameEventArgs e)
