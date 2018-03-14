@@ -9,11 +9,11 @@ namespace SoftwareRenderer
 {
     public class IndexedModel
     {
-        public readonly List<Vector4> Positions;
-        public readonly List<Vector4> TexCoords;
-        public readonly List<Vector4> Normals;
-        public readonly List<Vector4> Tangents;
-        public readonly List<int> Indices;
+        public List<Vector4> Positions { get; }
+        public List<Vector4> TexCoords { get; }
+        public List<Vector4> Normals { get; }
+        public List<Vector4> Tangents { get; }
+        public List<int> Indices { get; }
 
         public IndexedModel()
         {
