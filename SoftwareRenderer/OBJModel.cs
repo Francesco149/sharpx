@@ -114,10 +114,8 @@ namespace SoftwareRenderer
         public IndexedModel ToIndexedModel()
         {
             var result = new IndexedModel();
-            var normalModel = new IndexedModel();
             var resultIndexMap = new Dictionary<OBJIndex, int>();
             var normalIndexMap = new Dictionary<int, int>();
-            var indexMap = new Dictionary<int, int>();
 
             for (int i = 0; i < indices.Count; ++i)
             {
@@ -137,7 +135,6 @@ namespace SoftwareRenderer
                 else
                     currentNormal = new Vector4(0, 0, 0, 0);
 
-
                 if (!resultIndexMap.TryGetValue(currentIndex,
                                                 out int modelVertexIndex))
                 {
@@ -150,25 +147,8 @@ namespace SoftwareRenderer
                         result.Normals.Add(currentNormal);
                 }
 
-
-                if (!normalIndexMap.TryGetValue(currentIndex.VertexIndex,
-                                                out int normalModelIndex))
-                {
-                    normalModelIndex = normalModel.Positions.Count;
-                    normalIndexMap[currentIndex.VertexIndex] = normalModelIndex;
-
-                    normalModel.Positions.Add(currentPosition);
-                    normalModel.TexCoords.Add(currentTexCoord);
-                    normalModel.Normals.Add(currentNormal);
-                }
-
                 result.Indices.Add(modelVertexIndex);
-                normalModel.Indices.Add(normalModelIndex);
-                indexMap[modelVertexIndex] = normalModelIndex;
             }
-
-            if (!hasNormals)
-                normalModel.CalcNormals();
 
             return result;
         }
