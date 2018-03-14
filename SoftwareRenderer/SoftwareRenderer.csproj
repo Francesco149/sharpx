@@ -40,7 +40,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Bitmap.cs" />
     <Compile Include="Display.cs" />
-    <Compile Include="Stars3D.cs" />
     <Compile Include="RenderContext.cs" />
     <Compile Include="Vertex.cs" />
     <Compile Include="Matrix4Utils.cs" />
