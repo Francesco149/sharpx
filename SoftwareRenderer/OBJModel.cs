@@ -3,7 +3,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Threading;
 using OpenTK;
 
 public class OBJModel
@@ -59,6 +61,9 @@ public class OBJModel
         hasTexCoords = false;
         hasNormals = false;
 
+        CultureInfo oldCulture = Thread.CurrentThread.CurrentCulture;
+        Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
         using (var f = new FileStream(fileName, FileMode.Open, FileAccess.Read))
         using (var bs = new BufferedStream(f))
         using (var meshReader = new StreamReader(bs))
@@ -66,6 +71,8 @@ public class OBJModel
             for (string line; (line = meshReader.ReadLine()) != null;)
                 ParseLine(line);
         }
+
+        Thread.CurrentThread.CurrentCulture = oldCulture;
     }
 
     protected string[] SplitTrimEmpty(string str)
