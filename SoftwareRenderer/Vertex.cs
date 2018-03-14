@@ -33,10 +33,8 @@ public class Vertex
 
     public Vertex PerspectiveDivide()
     {
-        return new Vertex(
-            new Vector4(pos.X / pos.W, pos.Y / pos.W, pos.Z / pos.W, pos.W),
-            texCoords, normal
-        );
+        return
+            new Vertex(new Vector4(pos.Xyz / pos.W, pos.W), texCoords, normal);
     }
 
     public float TriangleAreaTimesTwo(Vertex b, Vertex c)
@@ -61,10 +59,9 @@ public class Vertex
 
     public bool IsInsideViewFrustum()
     {
-        return
-            Math.Abs(pos.X) <= Math.Abs(pos.W) &&
-            Math.Abs(pos.Y) <= Math.Abs(pos.W) &&
-            Math.Abs(pos.Z) <= Math.Abs(pos.W);
+        return Math.Abs(pos.X) <= Math.Abs(pos.W) &&
+               Math.Abs(pos.Y) <= Math.Abs(pos.W) &&
+               Math.Abs(pos.Z) <= Math.Abs(pos.W);
     }
 
     public float this[int index]

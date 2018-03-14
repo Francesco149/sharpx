@@ -18,54 +18,52 @@ public class RenderContext : Bitmap
     public void ClearDepthBuffer()
     {
         for (int i = 0; i < zBuffer.Length; ++i)
-        {
             zBuffer[i] = float.MaxValue;
-        }
     }
 
     public void DrawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture)
     {
-        if (v1.IsInsideViewFrustum() && v2.IsInsideViewFrustum() &&
-            v3.IsInsideViewFrustum())
+        bool allInside =
+            v1.IsInsideViewFrustum() &&
+            v2.IsInsideViewFrustum() &&
+            v3.IsInsideViewFrustum();
+
+        if (allInside) // lewd
         {
             FillTriangle(v1, v2, v3, texture);
             return;
         }
 
-        List<Vertex> vertices = new List<Vertex>();
-        List<Vertex> auxilliaryList = new List<Vertex>();
+        var verts = new List<Vertex>();
+        var buffer = new List<Vertex>();
 
-        vertices.Add(v1);
-        vertices.Add(v2);
-        vertices.Add(v3);
+        verts.Add(v1);
+        verts.Add(v2);
+        verts.Add(v3);
 
-        if (ClipPolygonAxis(vertices, auxilliaryList, 0) &&
-            ClipPolygonAxis(vertices, auxilliaryList, 1) &&
-            ClipPolygonAxis(vertices, auxilliaryList, 2))
+        bool anyVertsLeft =
+            ClipPolygonAxis(verts, buffer, 0) &&
+            ClipPolygonAxis(verts, buffer, 1) &&
+            ClipPolygonAxis(verts, buffer, 2);
+
+        if (anyVertsLeft)
         {
-            Vertex initialVertex = vertices[0];
-
-            for (int i = 1; i < vertices.Count - 1; ++i)
-            {
-                FillTriangle(initialVertex, vertices[i], vertices[i + 1],
-                             texture);
-            }
+            for (int i = 1; i < verts.Count - 1; ++i)
+                FillTriangle(verts[0], verts[i], verts[i + 1], texture);
         }
     }
 
     protected bool ClipPolygonAxis(List<Vertex> vertices,
-        List<Vertex> auxillaryList, int componentIndex)
+        List<Vertex> buffer, int componentIndex)
     {
-        ClipPolygonComponent(vertices, componentIndex, 1, auxillaryList);
+        ClipPolygonComponent(vertices, componentIndex, 1, buffer);
         vertices.Clear();
 
-        if (auxillaryList.Count == 0)
-        {
+        if (buffer.Count == 0)
             return false;
-        }
 
-        ClipPolygonComponent(auxillaryList, componentIndex, -1, vertices);
-        auxillaryList.Clear();
+        ClipPolygonComponent(buffer, componentIndex, -1, vertices);
+        buffer.Clear();
 
         return vertices.Count != 0;
     }
@@ -73,96 +71,74 @@ public class RenderContext : Bitmap
     public void ClipPolygonComponent(List<Vertex> vertices, int componentIndex,
         float componentFactor, List<Vertex> result)
     {
-        Vertex previousVertex = vertices[vertices.Count - 1];
-        float previousComponent =
-            previousVertex[componentIndex] * componentFactor;
-        bool previousInside =
-            previousComponent <= previousVertex.Position.W;
+        Vertex prevVertex = vertices[vertices.Count - 1];
+        float prevComponent = prevVertex[componentIndex] * componentFactor;
+        bool prevInside = prevComponent <= prevVertex.Position.W;
 
         foreach (Vertex it in vertices)
         {
-            Vertex currentVertex = it;
-            float currentComponent =
-                currentVertex[componentIndex] * componentFactor;
-            bool currentInside =
-                currentComponent <= currentVertex.Position.W;
+            Vertex currVertex = it;
+            float currComponent = currVertex[componentIndex] * componentFactor;
+            bool currInside = currComponent <= currVertex.Position.W;
 
-            if (currentInside ^ previousInside)
+            if (currInside ^ prevInside)
             {
                 float lerpAmt =
-                    (previousVertex.Position.W - previousComponent)
-                    / ((previousVertex.Position.W - previousComponent) -
-                       (currentVertex.Position.W - currentComponent));
+                    (prevVertex.Position.W - prevComponent)
+                    / (
+                        (prevVertex.Position.W - prevComponent) -
+                        (currVertex.Position.W - currComponent)
+                    );
 
-                result.Add(previousVertex.Lerp(currentVertex, lerpAmt));
+                result.Add(prevVertex.Lerp(currVertex, lerpAmt));
             }
 
-            if (currentInside)
-            {
-                result.Add(currentVertex);
-            }
+            if (currInside)
+                result.Add(currVertex);
 
-            previousVertex = currentVertex;
-            previousComponent = currentComponent;
-            previousInside = currentInside;
+            prevVertex = currVertex;
+            prevComponent = currComponent;
+            prevInside = currInside;
         }
+    }
+
+    protected void Swap(ref Vertex a, ref Vertex b)
+    {
+        Vertex tmp = b;
+        b = a;
+        a = tmp;
     }
 
     protected void FillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture)
     {
-        Matrix4 screenSpaceTransform =
-            Matrix4Utils.InitScreenSpaceTransform(Width / 2, Height / 2);
-        Matrix4 identity = Matrix4.Identity;
-        Vertex minYVert = v1.Transform(screenSpaceTransform, identity)
-                            .PerspectiveDivide();
-        Vertex midYVert = v2.Transform(screenSpaceTransform, identity)
-                            .PerspectiveDivide();
-        Vertex maxYVert = v3.Transform(screenSpaceTransform, identity)
-                            .PerspectiveDivide();
+        var screenSpace = Matrix4Utils.ScreenSpace(Width / 2, Height / 2);
+        Matrix4 iden = Matrix4.Identity;
+        Vertex minYVert = v1.Transform(screenSpace, iden).PerspectiveDivide();
+        Vertex midYVert = v2.Transform(screenSpace, iden).PerspectiveDivide();
+        Vertex maxYVert = v3.Transform(screenSpace, iden).PerspectiveDivide();
 
         if (minYVert.TriangleAreaTimesTwo(maxYVert, midYVert) >= 0)
-        {
             return;
-        }
 
-        if (maxYVert.Y < midYVert.Y)
-        {
-            Vertex tmp = maxYVert;
-            maxYVert = midYVert;
-            midYVert = tmp;
-        }
+        if (maxYVert.Y < midYVert.Y) Swap(ref maxYVert, ref midYVert);
+        if (midYVert.Y < minYVert.Y) Swap(ref midYVert, ref minYVert);
+        if (maxYVert.Y < midYVert.Y) Swap(ref maxYVert, ref midYVert);
 
-        if (midYVert.Y < minYVert.Y)
-        {
-            Vertex tmp = midYVert;
-            midYVert = minYVert;
-            minYVert = tmp;
-        }
-
-        if (maxYVert.Y < midYVert.Y)
-        {
-            Vertex tmp = maxYVert;
-            maxYVert = midYVert;
-            midYVert = tmp;
-        }
-
-        bool handedness =
-            minYVert.TriangleAreaTimesTwo(maxYVert, midYVert) >= 0;
-
-        ScanTriangle(minYVert, midYVert, maxYVert, handedness, texture);
+        float a = minYVert.TriangleAreaTimesTwo(maxYVert, midYVert);
+        ScanTriangle(minYVert, midYVert, maxYVert, a >= 0, texture);
     }
 
     protected void ScanTriangle(Vertex minYVert, Vertex midYVert,
         Vertex maxYVert, bool handedness, Bitmap texture)
     {
-        Gradients gradients = new Gradients(minYVert, midYVert, maxYVert);
-        Edge topToBottom = new Edge(gradients, minYVert, maxYVert, 0);
-        Edge topToMiddle = new Edge(gradients, minYVert, midYVert, 0);
-        Edge middleToBottom = new Edge(gradients, midYVert, maxYVert, 1);
+        var gradients = new Gradients(minYVert, midYVert, maxYVert);
 
-        ScanEdges(gradients, topToBottom, topToMiddle, handedness, texture);
-        ScanEdges(gradients, topToBottom, middleToBottom, handedness,
-                  texture);
+        Edge topBot = new Edge(gradients, minYVert, maxYVert, 0);
+        Edge topMid = new Edge(gradients, minYVert, midYVert, 0);
+        Edge midBot = new Edge(gradients, midYVert, maxYVert, 1);
+
+        ScanEdges(gradients, topBot, topMid, handedness, texture);
+        ScanEdges(gradients, topBot, midBot, handedness, texture);
     }
 
     protected void ScanEdges(Gradients gradients, Edge a, Edge b,
@@ -178,8 +154,8 @@ public class RenderContext : Bitmap
             right = temp;
         }
 
-        int yStart = b.YStart;
-        int yEnd = b.YEnd;
+        int yStart = b.YMin;
+        int yEnd = b.YMax;
 
         for (int j = yStart; j < yEnd; ++j)
         {
@@ -195,40 +171,40 @@ public class RenderContext : Bitmap
         int xMin = (int)Math.Ceiling(left.X);
         int xMax = (int)Math.Ceiling(right.X);
         float xPrestep = xMin - left.X;
-
         float xDist = right.X - left.X;
-        float texCoordXXStep = gradients.TexCoordXXStep;
-        float texCoordYXStep = gradients.TexCoordYXStep;
-        float oneOverZXStep = gradients.OneOverZXStep;
-        float depthXStep = gradients.DepthXStep;
-        float lightAmtXStep = gradients.LightAmtXStep;
 
-        float texCoordX = left.TexCoordX + texCoordXXStep * xPrestep;
-        float texCoordY = left.TexCoordY + texCoordYXStep * xPrestep;
-        float oneOverZ = left.OneOverZ + oneOverZXStep * xPrestep;
+        float texUXStep = gradients.TexUXStep;
+        float texVXStep = gradients.TexVXStep;
+        float oneOvrZXStep = gradients.OneOvrZXStep;
+        float depthXStep = gradients.DepthXStep;
+        float lightXStep = gradients.LightXStep;
+
+        float texU = left.TexU + texUXStep * xPrestep;
+        float texV = left.TexV + texVXStep * xPrestep;
+        float oneOverZ = left.OneOvrZ + oneOvrZXStep * xPrestep;
         float depth = left.Depth + depthXStep * xPrestep;
-        float lightAmt = left.LightAmt + lightAmtXStep * xPrestep;
+        float light = left.Light + lightXStep * xPrestep;
 
         for (int i = xMin; i < xMax; ++i)
         {
             int index = i + j * Width;
+
             if (depth < zBuffer[index])
             {
                 zBuffer[index] = depth;
-                float z = 1.0f / oneOverZ;
-                int srcX =
-                    (int)(texCoordX * z * (texture.Width - 1) + 0.5f);
-                int srcY =
-                    (int)(texCoordY * z * (texture.Height - 1) + 0.5f);
 
-                CopyPixel(i, j, srcX, srcY, texture, lightAmt);
+                float z = 1.0f / oneOverZ;
+                int srcX = (int)(texU * z * (texture.Width - 1) + 0.5f);
+                int srcY = (int)(texV * z * (texture.Height - 1) + 0.5f);
+
+                CopyPixel(i, j, srcX, srcY, texture, light);
             }
 
-            oneOverZ += oneOverZXStep;
-            texCoordX += texCoordXXStep;
-            texCoordY += texCoordYXStep;
+            oneOverZ += oneOvrZXStep;
+            texU += texUXStep;
+            texV += texVXStep;
             depth += depthXStep;
-            lightAmt += lightAmtXStep;
+            light += lightXStep;
         }
     }
 }

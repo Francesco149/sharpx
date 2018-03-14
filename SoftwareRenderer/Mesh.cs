@@ -12,13 +12,17 @@ public class Mesh
     public Mesh(string fileName)
     {
         IndexedModel model = new OBJModel(fileName).ToIndexedModel();
-
         Vertices = new List<Vertex>();
+
         for (int i = 0; i < model.Positions.Count; ++i)
         {
-            Vertices.Add(new Vertex(model.Positions[i],
-                                    model.TexCoords[i],
-                                    model.Normals[i]));
+            var v = new Vertex(
+                model.Positions[i],
+                model.TexCoords[i],
+                model.Normals[i]
+            );
+
+            Vertices.Add(v);
         }
 
         Indices = model.Indices;
@@ -32,10 +36,11 @@ public class Mesh
         for (int i = 0; i < Indices.Count; i += 3)
         {
             context.DrawTriangle(
-                Vertices[Indices[i]].Transform(mvp, transform),
+                Vertices[Indices[i + 0]].Transform(mvp, transform),
                 Vertices[Indices[i + 1]].Transform(mvp, transform),
                 Vertices[Indices[i + 2]].Transform(mvp, transform),
-                texture);
+                texture
+            );
         }
     }
 }

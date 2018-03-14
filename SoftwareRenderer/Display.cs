@@ -8,7 +8,7 @@ using OpenTK.Input;
 
 public class Display : GameWindow
 {
-    protected byte[] displayComponents;
+    protected byte[] bgrPixels;
 
     public RenderContext FrameBuffer { get; }
     public KeyboardState Input { get { return Keyboard.GetState(); } }
@@ -18,14 +18,14 @@ public class Display : GameWindow
                GameWindowFlags.FixedWindow)
     {
         FrameBuffer = new RenderContext(Width, Height);
-        displayComponents = new byte[Width * Height * 3];
+        bgrPixels = new byte[Width * Height * 3];
     }
 
     public new void SwapBuffers()
     {
-        FrameBuffer.CopyToByteArray(displayComponents);
+        FrameBuffer.CopyToByteArray(bgrPixels);
         GL.DrawPixels(FrameBuffer.Width, FrameBuffer.Height,
-          PixelFormat.Bgr, PixelType.UnsignedByte, displayComponents);
+          PixelFormat.Bgr, PixelType.UnsignedByte, bgrPixels);
         base.SwapBuffers();
     }
 }

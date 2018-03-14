@@ -7,13 +7,13 @@ public class Bitmap
 {
     public int Width { get; }
     public int Height { get; }
-    public byte[] Components { get; }
+    public byte[] Bytes { get; }
 
     public Bitmap(int width, int height)
     {
         Width = width;
         Height = height;
-        Components = new byte[width * height * 4];
+        Bytes = new byte[width * height * 4];
     }
 
     public Bitmap(string fileName)
@@ -21,7 +21,7 @@ public class Bitmap
         var image = new System.Drawing.Bitmap(fileName);
         Width = image.Width;
         Height = image.Height;
-        Components = new byte[Width * Height * 4];
+        Bytes = new byte[Width * Height * 4];
 
         for (int j = 0; j < Height; ++j)
         {
@@ -29,43 +29,38 @@ public class Bitmap
             {
                 Color pixel = image.GetPixel(i, j);
 
-                Components[(j * Width + i) * 4] = pixel.A;
-                Components[(j * Width + i) * 4 + 1] = pixel.B;
-                Components[(j * Width + i) * 4 + 2] = pixel.G;
-                Components[(j * Width + i) * 4 + 3] = pixel.R;
+                Bytes[(j * Width + i) * 4 + 0] = pixel.A;
+                Bytes[(j * Width + i) * 4 + 1] = pixel.B;
+                Bytes[(j * Width + i) * 4 + 2] = pixel.G;
+                Bytes[(j * Width + i) * 4 + 3] = pixel.R;
             }
         }
     }
 
     public void Clear(byte shade)
     {
-        for (int i = 0; i < Components.Length; ++i)
-        {
-            Components[i] = shade;
-        }
+        for (int i = 0; i < Bytes.Length; ++i)
+            Bytes[i] = shade;
     }
 
     public void DrawPixel(int x, int y, byte a, byte b, byte g, byte r)
     {
         int index = (x + y * Width) * 4;
-        Components[index] = a;
-        Components[index + 1] = b;
-        Components[index + 2] = g;
-        Components[index + 3] = r;
+        Bytes[index] = a;
+        Bytes[index + 1] = b;
+        Bytes[index + 2] = g;
+        Bytes[index + 3] = r;
     }
 
-    public void CopyPixel(int destX, int destY, int srcX, int srcY, Bitmap src,
-        float lightAmt)
+    public void CopyPixel(int destX, int destY, int srceX, int srceY,
+        Bitmap srce, float light)
     {
-        int destIndex = (destX + destY * Width) * 4;
-        int srcIndex = (srcX + srcY * src.Width) * 4;
-        Components[destIndex] = src.Components[srcIndex];
-        Components[destIndex + 1] =
-            (byte)(lightAmt * src.Components[srcIndex + 1]);
-        Components[destIndex + 2] =
-            (byte)(lightAmt * src.Components[srcIndex + 2]);
-        Components[destIndex + 3] =
-            (byte)(lightAmt * src.Components[srcIndex + 3]);
+        int dstIndex = (destX + destY * this.Width) * 4;
+        int srcIndex = (srceX + srceY * srce.Width) * 4;
+        Bytes[dstIndex] = srce.Bytes[srcIndex];
+        Bytes[dstIndex + 1] = (byte)(light * srce.Bytes[srcIndex + 1]);
+        Bytes[dstIndex + 2] = (byte)(light * srce.Bytes[srcIndex + 2]);
+        Bytes[dstIndex + 3] = (byte)(light * srce.Bytes[srcIndex + 3]);
     }
 
     public void CopyToByteArray(byte[] dest)
@@ -75,12 +70,14 @@ public class Bitmap
             for (int i = 0; i < Width; ++i)
             {
                 // OpenGL flips the frame buffer vertically
-                int sourceIndex = j * Width + i;
-                int destIndex = (Height - j - 1) * Width + i;
+                int k = Height - j - 1;
 
-                dest[destIndex * 3] = Components[sourceIndex * 4 + 1];
-                dest[destIndex * 3 + 1] = Components[sourceIndex * 4 + 2];
-                dest[destIndex * 3 + 2] = Components[sourceIndex * 4 + 3];
+                int srcIndex = j * Width + i;
+                int dstIndex = k * Width + i;
+
+                dest[dstIndex * 3 + 0] = Bytes[srcIndex * 4 + 1];
+                dest[dstIndex * 3 + 1] = Bytes[srcIndex * 4 + 2];
+                dest[dstIndex * 3 + 2] = Bytes[srcIndex * 4 + 3];
             }
         }
     }

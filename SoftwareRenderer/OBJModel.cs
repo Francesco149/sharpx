@@ -25,9 +25,9 @@ public class OBJModel
         {
             var index = (OBJIndex)obj;
 
-            return VertexIndex == index.VertexIndex
-                   && TexCoordIndex == index.TexCoordIndex
-                   && NormalIndex == index.NormalIndex;
+            return VertexIndex == index.VertexIndex &&
+                   TexCoordIndex == index.TexCoordIndex &&
+                   NormalIndex == index.NormalIndex;
         }
 
         public override int GetHashCode()
@@ -36,11 +36,9 @@ public class OBJModel
             const int MULTIPLIER = 31;
 
             int result = BASE;
-
             result = MULTIPLIER * result + VertexIndex;
             result = MULTIPLIER * result + TexCoordIndex;
             result = MULTIPLIER * result + NormalIndex;
-
             return result;
         }
     }
@@ -65,89 +63,50 @@ public class OBJModel
         using (var bs = new BufferedStream(f))
         using (var meshReader = new StreamReader(bs))
         {
-            string line;
-
-            while ((line = meshReader.ReadLine()) != null)
-            {
-                string[] tokens = line.Split(
-                    new char[] { ' ' },
-                    StringSplitOptions.RemoveEmptyEntries
-                );
-
-                if (tokens.Length == 0 || tokens[0] == "#")
-                    continue;
-                switch (tokens[0])
-                {
-                case "v":
-                    positions.Add(new Vector4(float.Parse(tokens[1]),
-                        float.Parse(tokens[2]), float.Parse(tokens[3]), 1));
-                    break;
-
-                case "vt":
-                    texCoords.Add(new Vector4(float.Parse(tokens[1]),
-                       float.Parse(tokens[2]), 0, 0));
-                    break;
-
-                case "vn":
-                    normals.Add(new Vector4(float.Parse(tokens[1]),
-                        float.Parse(tokens[2]), float.Parse(tokens[3]), 0));
-                    break;
-
-                case "f":
-                    for (int i = 0; i < tokens.Length - 3; ++i)
-                    {
-                        indices.Add(ParseOBJIndex(tokens[1]));
-                        indices.Add(ParseOBJIndex(tokens[2 + i]));
-                        indices.Add(ParseOBJIndex(tokens[3 + i]));
-                    }
-                    break;
-                }
-            }
+            for (string line; (line = meshReader.ReadLine()) != null;)
+                ParseLine(line);
         }
     }
 
-    public IndexedModel ToIndexedModel()
+    protected string[] SplitTrimEmpty(string str)
     {
-        var result = new IndexedModel();
-        var resultIndexMap = new Dictionary<OBJIndex, int>();
-        var normalIndexMap = new Dictionary<int, int>();
+        char[] cset = { ' ' };
+        return str.Split(cset, StringSplitOptions.RemoveEmptyEntries);
+    }
 
-        for (int i = 0; i < indices.Count; ++i)
+    protected void ParseLine(string line)
+    {
+        string[] tokens = SplitTrimEmpty(line);
+
+        if (tokens.Length == 0 || tokens[0] == "#")
+            return;
+
+        switch (tokens[0])
         {
-            OBJIndex currentIndex = indices[i];
+        case "v":
+            positions.Add(new Vector4(float.Parse(tokens[1]),
+                float.Parse(tokens[2]), float.Parse(tokens[3]), 1));
+            break;
 
-            Vector4 currentPosition = positions[currentIndex.VertexIndex];
-            Vector4 currentTexCoord;
-            Vector4 currentNormal;
+        case "vt":
+            texCoords.Add(new Vector4(float.Parse(tokens[1]),
+               float.Parse(tokens[2]), 0, 0));
+            break;
 
-            if (hasTexCoords)
-                currentTexCoord = texCoords[currentIndex.TexCoordIndex];
-            else
-                currentTexCoord = new Vector4(0, 0, 0, 0);
+        case "vn":
+            normals.Add(new Vector4(float.Parse(tokens[1]),
+                float.Parse(tokens[2]), float.Parse(tokens[3]), 0));
+            break;
 
-            if (hasNormals)
-                currentNormal = normals[currentIndex.NormalIndex];
-            else
-                currentNormal = new Vector4(0, 0, 0, 0);
-
-            bool found = resultIndexMap.TryGetValue(currentIndex,
-                out int modelVertexIndex);
-
-            if (!found)
+        case "f":
+            for (int i = 0; i < tokens.Length - 3; ++i)
             {
-                modelVertexIndex = result.Positions.Count;
-                resultIndexMap[currentIndex] = modelVertexIndex;
-
-                result.Positions.Add(currentPosition);
-                result.TexCoords.Add(currentTexCoord);
-                if (hasNormals)
-                    result.Normals.Add(currentNormal);
+                indices.Add(ParseOBJIndex(tokens[1]));
+                indices.Add(ParseOBJIndex(tokens[2 + i]));
+                indices.Add(ParseOBJIndex(tokens[3 + i]));
             }
-
-            result.Indices.Add(modelVertexIndex);
+            break;
         }
-
-        return result;
     }
 
     protected OBJIndex ParseOBJIndex(string token)
@@ -173,5 +132,46 @@ public class OBJModel
         }
 
         return new OBJIndex(vertexIndex, texCoordIndex, normalIndex);
+    }
+
+    public IndexedModel ToIndexedModel()
+    {
+        var result = new IndexedModel();
+        var indexMap = new Dictionary<OBJIndex, int>();
+
+        for (int i = 0; i < indices.Count; ++i)
+        {
+            OBJIndex index = indices[i];
+
+            Vector4 position = positions[index.VertexIndex];
+            Vector4 texCoord;
+            Vector4 normal;
+
+            texCoord = hasTexCoords ?
+                texCoords[index.TexCoordIndex]
+                : new Vector4(0, 0, 0, 0);
+
+            normal = hasNormals ?
+                normals[index.NormalIndex]
+                : new Vector4(0, 0, 0, 0);
+
+            bool found = indexMap.TryGetValue(index, out int vertexIndex);
+
+            if (!found)
+            {
+                vertexIndex = result.Positions.Count;
+                indexMap[index] = vertexIndex;
+
+                result.Positions.Add(position);
+                result.TexCoords.Add(texCoord);
+
+                if (hasNormals)
+                    result.Normals.Add(normal);
+            }
+
+            result.Indices.Add(vertexIndex);
+        }
+
+        return result;
     }
 }

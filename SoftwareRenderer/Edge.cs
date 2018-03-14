@@ -6,67 +6,75 @@ using System;
 public class Edge
 {
     protected float xStep;
-    protected float texCoordXStep;
-    protected float texCoordYStep;
-    protected float oneOverZStep;
+    protected float texUStep;
+    protected float texVStep;
+    protected float oneOvrZStep;
     protected float depthStep;
-    protected float lightAmtStep;
+    protected float lightStep;
 
     public float X { get; protected set; }
-    public int YStart { get; protected set; }
-    public int YEnd { get; protected set; }
-    public float TexCoordX { get; protected set; }
-    public float TexCoordY { get; protected set; }
-    public float OneOverZ { get; protected set; }
+    public int YMin { get; protected set; }
+    public int YMax { get; protected set; }
+    public float TexU { get; protected set; }
+    public float TexV { get; protected set; }
+    public float OneOvrZ { get; protected set; }
     public float Depth { get; protected set; }
-    public float LightAmt { get; protected set; }
+    public float Light { get; protected set; }
 
     public Edge(Gradients gradients, Vertex minYVert, Vertex maxYVert,
         int minYVertIndex)
     {
-        YStart = (int)Math.Ceiling(minYVert.Y);
-        YEnd = (int)Math.Ceiling(maxYVert.Y);
+        YMin = (int)Math.Ceiling(minYVert.Y);
+        YMax = (int)Math.Ceiling(maxYVert.Y);
 
         float yDist = maxYVert.Y - minYVert.Y;
         float xDist = maxYVert.X - minYVert.X;
 
-        float yPrestep = YStart - minYVert.Y;
+        float yPrestep = YMin - minYVert.Y;
         xStep = xDist / yDist;
         X = minYVert.X + yPrestep * xStep;
         float xPrestep = X - minYVert.X;
 
         Gradients g = gradients;
 
-        TexCoordX = g.TexCoordX[minYVertIndex] +
-                    g.TexCoordXYStep * yPrestep +
-                    g.TexCoordXXStep * xPrestep;
-        texCoordXStep = g.TexCoordXYStep + g.TexCoordXXStep * xStep;
+        texUStep = g.TexUXStep * xStep + g.TexUYStep;
+        TexU =
+            g.TexU[minYVertIndex] +
+            g.TexUXStep * xPrestep +
+            g.TexUYStep * yPrestep;
 
-        TexCoordY = g.TexCoordY[minYVertIndex] +
-                    g.TexCoordYYStep * yPrestep +
-                    g.TexCoordYXStep * xPrestep;
-        texCoordYStep = g.TexCoordYYStep + g.TexCoordYXStep * xStep;
+        texVStep = g.TexVXStep * xStep + g.TexVYStep;
+        TexV =
+            g.TexV[minYVertIndex] +
+            g.TexVXStep * xPrestep +
+            g.TexVYStep * yPrestep;
 
-        OneOverZ = g.OneOverZ[minYVertIndex] + g.OneOverZYStep * yPrestep +
-                   g.OneOverZXStep * xPrestep;
-        oneOverZStep = g.OneOverZYStep + g.OneOverZXStep * xStep;
+        oneOvrZStep = g.OneOvrZXStep * xStep + g.OneOvrZYStep;
+        OneOvrZ =
+            g.OneOvrZ[minYVertIndex] +
+            g.OneOvrZXStep * xPrestep +
+            g.OneOvrZYStep * yPrestep;
 
-        Depth = g.Depth[minYVertIndex] + g.DepthYStep * yPrestep +
-                g.DepthXStep * xPrestep;
-        depthStep = g.DepthYStep + g.DepthXStep * xStep;
+        depthStep = g.DepthXStep * xStep + g.DepthYStep;
+        Depth =
+            g.Depth[minYVertIndex] +
+            g.DepthXStep * xPrestep +
+            g.DepthYStep * yPrestep;
 
-        LightAmt = g.LightAmt[minYVertIndex] + g.LightAmtYStep * yPrestep +
-                   g.LightAmtXStep * xPrestep;
-        lightAmtStep = g.LightAmtYStep + g.LightAmtXStep * xStep;
+        lightStep = g.LightXStep * xStep + g.LightYStep;
+        Light =
+            g.Light[minYVertIndex] +
+            g.LightXStep * xPrestep +
+            g.LightYStep * yPrestep;
     }
 
     public void Step()
     {
         X += xStep;
-        TexCoordX += texCoordXStep;
-        TexCoordY += texCoordYStep;
-        OneOverZ += oneOverZStep;
+        TexU += texUStep;
+        TexV += texVStep;
+        OneOvrZ += oneOvrZStep;
         Depth += depthStep;
-        LightAmt += lightAmtStep;
+        Light += lightStep;
     }
 }

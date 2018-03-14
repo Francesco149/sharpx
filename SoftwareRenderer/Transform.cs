@@ -5,9 +5,9 @@ using OpenTK;
 
 public class Transform
 {
-    protected Vector4 pos;
-    protected Quaternion rot;
-    protected Vector4 scale;
+    public Vector4 Pos { get; protected set; }
+    public Quaternion Rot { get; protected set; }
+    public Vector4 Scale { get; protected set; }
 
     public Transform()
         : this(new Vector4(0, 0, 0, 0))
@@ -21,19 +21,19 @@ public class Transform
 
     public Transform(Vector4 pos, Quaternion rot, Vector4 scale)
     {
-        this.pos = pos;
-        this.rot = rot;
-        this.scale = scale;
+        Pos = pos;
+        Rot = rot;
+        Scale = scale;
     }
 
     public Transform SetPos(Vector4 newPos)
     {
-        return new Transform(newPos, rot, scale);
+        return new Transform(newPos, Rot, Scale);
     }
 
     public Transform Rotate(Quaternion newRot)
     {
-        return new Transform(pos, (newRot * rot).Normalized(), scale);
+        return new Transform(Pos, (newRot * Rot).Normalized(), Scale);
     }
 
     public Transform LookAt(Vector4 point, Vector4 up)
@@ -43,31 +43,19 @@ public class Transform
 
     public Quaternion GetLookAtRotation(Vector4 point, Vector4 up)
     {
-        return Quaternion.FromMatrix(
-            new Matrix3(
-                Matrix4.LookAt(new Vector3(pos), new Vector3(point),
-                    new Vector3(up))
-            )
-        );
+        var m = Matrix4.LookAt(Pos.Xyz, point.Xyz, up.Xyz);
+        var m3 = new Matrix3(m);
+        return Quaternion.FromMatrix(m3);
     }
 
-    public Matrix4 Transformation
+    public Matrix4 Matrix
     {
         get
         {
-            Matrix4 translationMatrix =
-                Matrix4.CreateTranslation(pos.X, pos.Y, pos.Z);
-            Matrix4 rotationMatrix = Matrix4.CreateFromQuaternion(rot);
-            Matrix4 scaleMatrix =
-                Matrix4.CreateScale(scale.X, scale.Y, scale.Z);
-
-            return scaleMatrix * rotationMatrix * translationMatrix;
+            return
+                Matrix4.CreateScale(Scale.X, Scale.Y, Scale.Z) *
+                Matrix4.CreateFromQuaternion(Rot) *
+                Matrix4.CreateTranslation(Pos.X, Pos.Y, Pos.Z);
         }
     }
-
-    public Vector4 TransformedPos { get { return pos; } }
-    public Quaternion TransformedRot { get { return rot; } }
-    public Vector4 Pos { get { return pos; } }
-    public Quaternion Rot { get { return rot; } }
-    public Vector4 Scale { get { return scale; } }
 }
