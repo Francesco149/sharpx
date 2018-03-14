@@ -21,8 +21,6 @@ namespace SoftwareRenderer
         {
             FrameBuffer = new RenderContext(Width, Height);
             displayComponents = new byte[Width * Height * 3];
-            FrameBuffer.Clear(0);
-            FrameBuffer.DrawPixel(100, 100, 0, 0, 0, 0xFF);
         }
 
         public new void SwapBuffers()
