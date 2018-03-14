@@ -12,9 +12,16 @@ namespace SoftwareRenderer
     {
         protected class OBJIndex
         {
-            public int VertexIndex;
-            public int TexCoordIndex;
-            public int NormalIndex;
+            public int VertexIndex { get; }
+            public int TexCoordIndex { get; }
+            public int NormalIndex { get; }
+
+            public OBJIndex(int vertexIndex, int texCoordIndex, int normalIndex)
+            {
+                VertexIndex = vertexIndex;
+                TexCoordIndex = texCoordIndex;
+                NormalIndex = normalIndex;
+            }
 
             public override bool Equals(object obj)
             {
@@ -32,11 +39,9 @@ namespace SoftwareRenderer
 
                 int result = BASE;
 
-#pragma warning disable RECS0025 // Non-readonly field referenced in 'GetHashCode()'
                 result = MULTIPLIER * result + VertexIndex;
                 result = MULTIPLIER * result + TexCoordIndex;
                 result = MULTIPLIER * result + NormalIndex;
-#pragma warning restore RECS0025 // Non-readonly field referenced in 'GetHashCode()'
 
                 return result;
             }
@@ -180,25 +185,25 @@ namespace SoftwareRenderer
         {
             string[] values = token.Split(new char[] { '/' });
 
-            var result = new OBJIndex();
-            result.VertexIndex = int.Parse(values[0]) - 1;
+            int vertexIndex = int.Parse(values[0]) - 1;
+            int texCoordIndex = 0, normalIndex = 0;
 
             if (values.Length > 1)
             {
                 if (values[1] != "")
                 {
                     hasTexCoords = true;
-                    result.TexCoordIndex = int.Parse(values[1]) - 1;
+                    texCoordIndex = int.Parse(values[1]) - 1;
                 }
 
                 if (values[2] != "")
                 {
                     hasNormals = true;
-                    result.NormalIndex = int.Parse(values[2]) - 1;
+                    normalIndex = int.Parse(values[2]) - 1;
                 }
             }
 
-            return result;
+            return new OBJIndex(vertexIndex, texCoordIndex, normalIndex);
         }
     }
 }
