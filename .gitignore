@@ -3,3 +3,4 @@
 /SoftwareRenderer/bin/*
 /SoftwareRenderer/obj/*
 *~
+/perf.log
