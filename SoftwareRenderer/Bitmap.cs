@@ -62,14 +62,17 @@ namespace SoftwareRenderer
         }
 
         public void CopyPixel(int destX, int destY, int srcX, int srcY,
-                              Bitmap src)
+                              Bitmap src, float lightAmt)
         {
             int destIndex = (destX + destY * width) * 4;
             int srcIndex = (srcX + srcY * src.Width) * 4;
             components[destIndex] = src.Components[srcIndex];
-            components[destIndex + 1] = src.Components[srcIndex + 1];
-            components[destIndex + 2] = src.Components[srcIndex + 2];
-            components[destIndex + 3] = src.components[srcIndex + 3];
+            components[destIndex + 1] =
+                (byte)(lightAmt * src.Components[srcIndex + 1]);
+            components[destIndex + 2] =
+                (byte)(lightAmt * src.Components[srcIndex + 2]);
+            components[destIndex + 3] =
+                (byte)(lightAmt * src.components[srcIndex + 3]);
         }
 
         public void CopyToByteArray(byte[] dest)

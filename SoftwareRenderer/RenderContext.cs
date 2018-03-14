@@ -119,12 +119,12 @@ namespace SoftwareRenderer
         {
             Matrix4 screenSpaceTransform =
                 Matrix4Utils.InitScreenSpaceTransform(Width / 2, Height / 2);
-
-            Vertex minYVert = v1.Transform(screenSpaceTransform)
+            Matrix4 identity = Matrix4.Identity;
+            Vertex minYVert = v1.Transform(screenSpaceTransform, identity)
                                 .PerspectiveDivide();
-            Vertex midYVert = v2.Transform(screenSpaceTransform)
+            Vertex midYVert = v2.Transform(screenSpaceTransform, identity)
                                 .PerspectiveDivide();
-            Vertex maxYVert = v3.Transform(screenSpaceTransform)
+            Vertex maxYVert = v3.Transform(screenSpaceTransform, identity)
                                 .PerspectiveDivide();
 
             if (minYVert.TriangleAreaTimesTwo(maxYVert, midYVert) >= 0)
@@ -168,12 +168,13 @@ namespace SoftwareRenderer
             Edge topToMiddle = new Edge(gradients, minYVert, midYVert, 0);
             Edge middleToBottom = new Edge(gradients, midYVert, maxYVert, 1);
 
-            ScanEdges(topToBottom, topToMiddle, handedness, texture);
-            ScanEdges(topToBottom, middleToBottom, handedness, texture);
+            ScanEdges(gradients, topToBottom, topToMiddle, handedness, texture);
+            ScanEdges(gradients, topToBottom, middleToBottom, handedness,
+                      texture);
         }
 
-        protected void ScanEdges(Edge a, Edge b, bool handedness,
-                                 Bitmap texture)
+        protected void ScanEdges(Gradients gradients, Edge a, Edge b,
+                                 bool handedness, Bitmap texture)
         {
             Edge left = a;
             Edge right = b;
@@ -190,29 +191,31 @@ namespace SoftwareRenderer
 
             for (int j = yStart; j < yEnd; ++j)
             {
-                DrawScanLine(left, right, j, texture);
+                DrawScanLine(gradients, left, right, j, texture);
                 left.Step();
                 right.Step();
             }
         }
 
-        protected void DrawScanLine(Edge left, Edge right, int j,
-                                    Bitmap texture)
+        protected void DrawScanLine(Gradients gradients, Edge left, Edge right,
+                                    int j, Bitmap texture)
         {
             int xMin = (int)Math.Ceiling(left.X);
             int xMax = (int)Math.Ceiling(right.X);
             float xPrestep = xMin - left.X;
 
             float xDist = right.X - left.X;
-            float texCoordXXStep = (right.TexCoordX - left.TexCoordX) / xDist;
-            float texCoordYXStep = (right.TexCoordY - left.TexCoordY) / xDist;
-            float oneOverZXStep = (right.OneOverZ - left.OneOverZ) / xDist;
-            float depthXStep = (right.Depth - left.Depth) / xDist;
+            float texCoordXXStep = gradients.TexCoordXXStep;
+            float texCoordYXStep = gradients.TexCoordYXStep;
+            float oneOverZXStep = gradients.OneOverZXStep;
+            float depthXStep = gradients.DepthXStep;
+            float lightAmtXStep = gradients.LightAmtXStep;
 
             float texCoordX = left.TexCoordX + texCoordXXStep * xPrestep;
             float texCoordY = left.TexCoordY + texCoordYXStep * xPrestep;
             float oneOverZ = left.OneOverZ + oneOverZXStep * xPrestep;
             float depth = left.Depth + depthXStep * xPrestep;
+            float lightAmt = left.LightAmt + lightAmtXStep * xPrestep;
 
             for (int i = xMin; i < xMax; ++i)
             {
@@ -226,13 +229,14 @@ namespace SoftwareRenderer
                     int srcY =
                         (int)(texCoordY * z * (texture.Height - 1) + 0.5f);
 
-                    CopyPixel(i, j, srcX, srcY, texture);
+                    CopyPixel(i, j, srcX, srcY, texture, lightAmt);
                 }
 
                 oneOverZ += oneOverZXStep;
                 texCoordX += texCoordXXStep;
                 texCoordY += texCoordYXStep;
                 depth += depthXStep;
+                lightAmt += lightAmtXStep;
             }
         }
     }

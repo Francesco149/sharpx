@@ -19,21 +19,24 @@ namespace SoftwareRenderer
             for (int i = 0; i < model.Positions.Count; ++i)
             {
                 Vertices.Add(new Vertex(model.Positions[i],
-                                        model.TexCoords[i]));
+                                        model.TexCoords[i],
+                                        model.Normals[i]));
             }
 
             Indices = model.Indices;
         }
 
-        public void Draw(RenderContext context, Matrix4 transform,
-                         Bitmap texture)
+        public void Draw(RenderContext context, Matrix4 viewProjection,
+                         Matrix4 transform, Bitmap texture)
         {
+            Matrix4 mvp = transform * viewProjection;
+
             for (int i = 0; i < Indices.Count; i += 3)
             {
                 context.DrawTriangle(
-                    Vertices[Indices[i]].Transform(transform),
-                    Vertices[Indices[i + 1]].Transform(transform),
-                    Vertices[Indices[i + 2]].Transform(transform),
+                    Vertices[Indices[i]].Transform(mvp, transform),
+                    Vertices[Indices[i + 1]].Transform(mvp, transform),
+                    Vertices[Indices[i + 2]].Transform(mvp, transform),
                     texture);
             }
         }

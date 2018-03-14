@@ -12,23 +12,23 @@ namespace SoftwareRenderer
         {
             Display display = new Display();
             RenderContext target = display.FrameBuffer;
-            Stars3D stars = new Stars3D(3, 64, 4);
 
             Bitmap texture = new Bitmap("./res/bricks.jpg");
-            Mesh mesh = new Mesh("./res/monkey0.obj");
+            Bitmap texture2 = new Bitmap("./res/bricks2.jpg");
+            Mesh monkeyMesh = new Mesh("./res/smoothMonkey0.obj");
+            Transform monkeyTransform = new Transform(new Vector4(0, 0, 3, 1));
 
-            Vertex minYVert = new Vertex(new Vector4(-1, -1, 0, 1),
-                                         new Vector4(0, 0, 0, 0));
-            Vertex midYVert = new Vertex(new Vector4(0, 1, 0, 1),
-                                         new Vector4(0.5f, 1, 0, 0));
-            Vertex maxYVert = new Vertex(new Vector4(1, -1, 0, 1),
-                                         new Vector4(1, 0, 0, 0));
+            Mesh terrainMesh = new Mesh("./res/terrain2.obj");
+            Transform terrainTransform =
+                new Transform(new Vector4(0, -1, 0, 1));
 
-            Matrix4 projection =
-               Matrix4Utils.InitPerspective(
-                    MathHelper.DegreesToRadians(70.0f),
+            Camera camera = new Camera(
+                Matrix4Utils.InitPerspective(
+                    MathHelper.DegreesToRadians(70),
                     (float)target.Width / target.Height,
-                    0.1f, 1000.0f);
+                    0.1f, 1000.0f
+                )
+            );
 
             float rotCounter = 0;
             long previousTime = DateTime.UtcNow.Ticks;
@@ -40,24 +40,23 @@ namespace SoftwareRenderer
                                       / 10000000.0);
                 previousTime = currentTime;
 
-                //stars.UpdateAndRender(target, delta);
+                camera.Update(display.Input, delta);
+                Matrix4 vp = camera.ViewProjection;
 
-                rotCounter += delta;
-                Matrix4 translation =
-                    Matrix4.CreateTranslation(
-                        0, 0, 3 - 3 * (float)Math.Sin(rotCounter)
-                    );
-                Matrix4 rotation = Matrix4.CreateRotationX(rotCounter) *
-                                   Matrix4.CreateRotationZ(rotCounter);
-                Matrix4 transform = rotation * translation * projection;
+                monkeyTransform = monkeyTransform.Rotate(
+                    Quaternion.FromAxisAngle(new Vector3(0, 1, 0), delta)
+                );
 
                 target.Clear(0x00);
                 target.ClearDepthBuffer();
-                mesh.Draw(target, transform, texture);
-                //target.FillTriangle(maxYVert.Transform(transform),
-                //midYVert.Transform(transform),
-                //minYVert.Transform(transform),
-                //texture);
+
+                monkeyMesh.Draw(
+                    target, vp, monkeyTransform.Transformation, texture2
+                );
+
+                terrainMesh.Draw(
+                    target, vp, terrainTransform.Transformation, texture
+                );
 
                 display.SwapBuffers();
             };

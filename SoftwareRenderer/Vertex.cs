@@ -10,28 +10,34 @@ namespace SoftwareRenderer
     {
         protected Vector4 pos;
         protected Vector4 texCoords;
+        protected Vector4 normal;
 
         public float X { get { return pos.X; } }
         public float Y { get { return pos.Y; } }
         public Vector4 Position { get { return pos; } }
         public Vector4 TexCoords { get { return texCoords; } }
+        public Vector4 Normal { get { return normal; } }
 
-        public Vertex(Vector4 pos, Vector4 texCoords)
+        public Vertex(Vector4 pos, Vector4 texCoords, Vector4 normal)
         {
             this.pos = pos;
             this.texCoords = texCoords;
+            this.normal = normal;
         }
 
-        public Vertex Transform(Matrix4 transform)
+        public Vertex Transform(Matrix4 transform, Matrix4 normalTransform)
         {
-            return new Vertex(Vector4.Transform(pos, transform), texCoords);
+            return new Vertex(
+                Vector4.Transform(pos, transform), texCoords,
+                Vector4.Transform(normal, normalTransform)
+            );
         }
 
         public Vertex PerspectiveDivide()
         {
             return new Vertex(
                 new Vector4(pos.X / pos.W, pos.Y / pos.W, pos.Z / pos.W, pos.W),
-                texCoords
+                texCoords, normal
             );
         }
 
@@ -50,7 +56,8 @@ namespace SoftwareRenderer
         {
             return new Vertex(
                 Vector4.Lerp(pos, other.Position, lerpAmt),
-                Vector4.Lerp(texCoords, other.TexCoords, lerpAmt)
+                Vector4.Lerp(texCoords, other.TexCoords, lerpAmt),
+                Vector4.Lerp(normal, other.Normal, lerpAmt)
             );
         }
 

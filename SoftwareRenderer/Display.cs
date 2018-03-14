@@ -4,6 +4,7 @@
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Input;
 
 namespace SoftwareRenderer
 {
@@ -13,6 +14,7 @@ namespace SoftwareRenderer
         protected byte[] displayComponents;
 
         public RenderContext FrameBuffer { get { return frameBuffer; } }
+        public KeyboardState Input { get { return Keyboard.GetState(); } }
 
         public Display()
             : base(800, 600, GraphicsMode.Default, "opentk",
