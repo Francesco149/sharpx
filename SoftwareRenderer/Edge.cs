@@ -37,35 +37,29 @@ namespace SoftwareRenderer
             X = minYVert.X + yPrestep * xStep;
             float xPrestep = X - minYVert.X;
 
-            TexCoordX = gradients.TexCoordX[minYVertIndex] +
-                        gradients.TexCoordXYStep * yPrestep +
-                        gradients.TexCoordXXStep * xPrestep;
-            texCoordXStep = gradients.TexCoordXYStep +
-                            gradients.TexCoordXXStep * xStep;
+            Gradients g = gradients;
 
-            TexCoordY = gradients.TexCoordY[minYVertIndex] +
-                        gradients.TexCoordYYStep * yPrestep +
-                        gradients.TexCoordYXStep * xPrestep;
-            texCoordYStep = gradients.TexCoordYYStep +
-                            gradients.TexCoordYXStep * xStep;
+            TexCoordX = g.TexCoordX[minYVertIndex] +
+                        g.TexCoordXYStep * yPrestep +
+                        g.TexCoordXXStep * xPrestep;
+            texCoordXStep = g.TexCoordXYStep + g.TexCoordXXStep * xStep;
 
-            OneOverZ = gradients.OneOverZ[minYVertIndex] +
-                       gradients.OneOverZYStep * yPrestep +
-                       gradients.OneOverZXStep * xPrestep;
-            oneOverZStep = gradients.OneOverZYStep +
-                           gradients.OneOverZXStep * xStep;
+            TexCoordY = g.TexCoordY[minYVertIndex] +
+                        g.TexCoordYYStep * yPrestep +
+                        g.TexCoordYXStep * xPrestep;
+            texCoordYStep = g.TexCoordYYStep + g.TexCoordYXStep * xStep;
 
-            Depth = gradients.Depth[minYVertIndex] +
-                    gradients.DepthYStep * yPrestep +
-                    gradients.DepthXStep * xPrestep;
-            depthStep = gradients.DepthYStep +
-                        gradients.DepthXStep * xStep;
+            OneOverZ = g.OneOverZ[minYVertIndex] + g.OneOverZYStep * yPrestep +
+                       g.OneOverZXStep * xPrestep;
+            oneOverZStep = g.OneOverZYStep + g.OneOverZXStep * xStep;
 
-            LightAmt = gradients.LightAmt[minYVertIndex] +
-                       gradients.LightAmtYStep * yPrestep +
-                       gradients.LightAmtXStep * xPrestep;
-            lightAmtStep = gradients.LightAmtYStep +
-                           gradients.LightAmtXStep * xStep;
+            Depth = g.Depth[minYVertIndex] + g.DepthYStep * yPrestep +
+                    g.DepthXStep * xPrestep;
+            depthStep = g.DepthYStep + g.DepthXStep * xStep;
+
+            LightAmt = g.LightAmt[minYVertIndex] + g.LightAmtYStep * yPrestep +
+                       g.LightAmtXStep * xPrestep;
+            lightAmtStep = g.LightAmtYStep + g.LightAmtXStep * xStep;
         }
 
         public void Step()
