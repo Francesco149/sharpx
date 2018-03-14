@@ -137,10 +137,9 @@ namespace SoftwareRenderer
                 else
                     currentNormal = new Vector4(0, 0, 0, 0);
 
-                int modelVertexIndex;
 
                 if (!resultIndexMap.TryGetValue(currentIndex,
-                                                out modelVertexIndex))
+                                                out int modelVertexIndex))
                 {
                     modelVertexIndex = result.Positions.Count;
                     resultIndexMap[currentIndex] = modelVertexIndex;
@@ -151,10 +150,9 @@ namespace SoftwareRenderer
                         result.Normals.Add(currentNormal);
                 }
 
-                int normalModelIndex;
 
                 if (!normalIndexMap.TryGetValue(currentIndex.VertexIndex,
-                                                out normalModelIndex))
+                                                out int normalModelIndex))
                 {
                     normalModelIndex = normalModel.Positions.Count;
                     normalIndexMap[currentIndex.VertexIndex] = normalModelIndex;
