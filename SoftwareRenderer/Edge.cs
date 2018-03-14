@@ -22,7 +22,7 @@ public class Edge
     public float LightAmt { get; protected set; }
 
     public Edge(Gradients gradients, Vertex minYVert, Vertex maxYVert,
-               int minYVertIndex)
+        int minYVertIndex)
     {
         YStart = (int)Math.Ceiling(minYVert.Y);
         YEnd = (int)Math.Ceiling(maxYVert.Y);

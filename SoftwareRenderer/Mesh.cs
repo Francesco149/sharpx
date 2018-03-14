@@ -25,7 +25,7 @@ public class Mesh
     }
 
     public void Draw(RenderContext context, Matrix4 viewProjection,
-                     Matrix4 transform, Bitmap texture)
+        Matrix4 transform, Bitmap texture)
     {
         Matrix4 mvp = transform * viewProjection;
 

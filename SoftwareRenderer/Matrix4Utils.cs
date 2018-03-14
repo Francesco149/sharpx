@@ -7,7 +7,7 @@ using OpenTK;
 public static class Matrix4Utils
 {
     public static Matrix4 InitScreenSpaceTransform(float halfWidth,
-                                                   float halfHeight)
+        float halfHeight)
     {
         return new Matrix4(
             halfWidth, 0, 0, 0,
@@ -18,7 +18,7 @@ public static class Matrix4Utils
     }
 
     public static Matrix4 InitPerspective(float fov, float aspectRatio,
-                                          float zNear, float zFar)
+        float zNear, float zFar)
     {
         // Matrix4.CreatePerspectiveFieldOfView uses the OpenGL convention
         // (forward is negative Z) so I made this which mimick benny's

@@ -61,9 +61,8 @@ public class OBJModel
         hasTexCoords = false;
         hasNormals = false;
 
-        using (var fs = new FileStream(fileName, FileMode.Open,
-                                       FileAccess.Read))
-        using (var bs = new BufferedStream(fs))
+        using (var f = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+        using (var bs = new BufferedStream(f))
         using (var meshReader = new StreamReader(bs))
         {
             string line;
@@ -81,8 +80,7 @@ public class OBJModel
                 {
                 case "v":
                     positions.Add(new Vector4(float.Parse(tokens[1]),
-                        float.Parse(tokens[2]), float.Parse(tokens[3]),
-                        1));
+                        float.Parse(tokens[2]), float.Parse(tokens[3]), 1));
                     break;
 
                 case "vt":
@@ -92,8 +90,7 @@ public class OBJModel
 
                 case "vn":
                     normals.Add(new Vector4(float.Parse(tokens[1]),
-                        float.Parse(tokens[2]), float.Parse(tokens[3]),
-                        0));
+                        float.Parse(tokens[2]), float.Parse(tokens[3]), 0));
                     break;
 
                 case "f":
@@ -133,8 +130,10 @@ public class OBJModel
             else
                 currentNormal = new Vector4(0, 0, 0, 0);
 
-            if (!resultIndexMap.TryGetValue(currentIndex,
-                                            out int modelVertexIndex))
+            bool found = resultIndexMap.TryGetValue(currentIndex,
+                out int modelVertexIndex);
+
+            if (!found)
             {
                 modelVertexIndex = result.Positions.Count;
                 resultIndexMap[currentIndex] = modelVertexIndex;

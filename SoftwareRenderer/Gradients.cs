@@ -22,9 +22,8 @@ public class Gradients
     public float LightAmtXStep { get; }
     public float LightAmtYStep { get; }
 
-    protected float CalcXStep(float[] values, Vertex minYVert,
-                              Vertex midYVert, Vertex maxYVert,
-                              float oneOverdX)
+    protected float CalcXStep(float[] values, Vertex minYVert, Vertex midYVert,
+        Vertex maxYVert, float oneOverdX)
     {
         return
             ((values[1] - values[2]) * (minYVert.Y - maxYVert.Y) -
@@ -32,9 +31,8 @@ public class Gradients
             * oneOverdX;
     }
 
-    protected float CalcYStep(float[] values, Vertex minYVert,
-                              Vertex midYVert, Vertex maxYVert,
-                              float oneOverdY)
+    protected float CalcYStep(float[] values, Vertex minYVert, Vertex midYVert,
+        Vertex maxYVert, float oneOverdY)
     {
         return
             ((values[1] - values[2]) * (minYVert.X - maxYVert.X) -

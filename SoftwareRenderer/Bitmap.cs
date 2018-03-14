@@ -54,8 +54,8 @@ public class Bitmap
         Components[index + 3] = r;
     }
 
-    public void CopyPixel(int destX, int destY, int srcX, int srcY,
-                          Bitmap src, float lightAmt)
+    public void CopyPixel(int destX, int destY, int srcX, int srcY, Bitmap src,
+        float lightAmt)
     {
         int destIndex = (destX + destY * Width) * 4;
         int srcIndex = (srcX + srcY * src.Width) * 4;

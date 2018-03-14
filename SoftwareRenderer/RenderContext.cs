@@ -23,8 +23,7 @@ public class RenderContext : Bitmap
         }
     }
 
-    public void DrawTriangle(Vertex v1, Vertex v2, Vertex v3,
-                             Bitmap texture)
+    public void DrawTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture)
     {
         if (v1.IsInsideViewFrustum() && v2.IsInsideViewFrustum() &&
             v3.IsInsideViewFrustum())
@@ -55,8 +54,7 @@ public class RenderContext : Bitmap
     }
 
     protected bool ClipPolygonAxis(List<Vertex> vertices,
-                                   List<Vertex> auxillaryList,
-                                   int componentIndex)
+        List<Vertex> auxillaryList, int componentIndex)
     {
         ClipPolygonComponent(vertices, componentIndex, 1, auxillaryList);
         vertices.Clear();
@@ -72,10 +70,8 @@ public class RenderContext : Bitmap
         return vertices.Count != 0;
     }
 
-    public void ClipPolygonComponent(List<Vertex> vertices,
-                                     int componentIndex,
-                                     float componentFactor,
-                                     List<Vertex> result)
+    public void ClipPolygonComponent(List<Vertex> vertices, int componentIndex,
+        float componentFactor, List<Vertex> result)
     {
         Vertex previousVertex = vertices[vertices.Count - 1];
         float previousComponent =
@@ -112,8 +108,7 @@ public class RenderContext : Bitmap
         }
     }
 
-    protected void FillTriangle(Vertex v1, Vertex v2, Vertex v3,
-                             Bitmap texture)
+    protected void FillTriangle(Vertex v1, Vertex v2, Vertex v3, Bitmap texture)
     {
         Matrix4 screenSpaceTransform =
             Matrix4Utils.InitScreenSpaceTransform(Width / 2, Height / 2);
@@ -158,8 +153,7 @@ public class RenderContext : Bitmap
     }
 
     protected void ScanTriangle(Vertex minYVert, Vertex midYVert,
-                            Vertex maxYVert, bool handedness,
-                            Bitmap texture)
+        Vertex maxYVert, bool handedness, Bitmap texture)
     {
         Gradients gradients = new Gradients(minYVert, midYVert, maxYVert);
         Edge topToBottom = new Edge(gradients, minYVert, maxYVert, 0);
@@ -172,7 +166,7 @@ public class RenderContext : Bitmap
     }
 
     protected void ScanEdges(Gradients gradients, Edge a, Edge b,
-                             bool handedness, Bitmap texture)
+        bool handedness, Bitmap texture)
     {
         Edge left = a;
         Edge right = b;
@@ -196,7 +190,7 @@ public class RenderContext : Bitmap
     }
 
     protected void DrawScanLine(Gradients gradients, Edge left, Edge right,
-                                int j, Bitmap texture)
+        int j, Bitmap texture)
     {
         int xMin = (int)Math.Ceiling(left.X);
         int xMax = (int)Math.Ceiling(right.X);
