@@ -28,18 +28,15 @@ namespace SoftwareRenderer
         {
             get
             {
-                Matrix4 cameraRotation =
+                Matrix4 rotation =
                     Matrix4.CreateFromQuaternion(
                         Quaternion.Conjugate(transform.TransformedRot)
                     );
 
-                Vector4 cameraPos = transform.TransformedPos * -1;
-                Matrix4 cameraTranslation =
-                    Matrix4.CreateTranslation(
-                        cameraPos.X, cameraPos.Y, cameraPos.Z
-                    );
+                Vector4 pos = transform.TransformedPos * -1;
+                Matrix4 translation = Matrix4.CreateTranslation(pos.Xyz);
 
-                return cameraTranslation * cameraRotation * projection;
+                return translation * rotation * projection;
             }
         }
 
