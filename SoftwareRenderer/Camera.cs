@@ -10,13 +10,12 @@ public class Camera
     static readonly Vector4 Y_AXIS = new Vector4(0, 1, 0, 0);
     static readonly Vector4 Z_AXIS = new Vector4(0, 0, 1, 0);
 
-    protected Transform transform;
+    protected Transform transform = new Transform();
     protected Matrix4 projection;
 
     public Camera(Matrix4 projection)
     {
         this.projection = projection;
-        transform = new Transform();
     }
 
     public Matrix4 ViewProjection

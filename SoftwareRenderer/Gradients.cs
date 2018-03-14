@@ -5,11 +5,11 @@ using OpenTK;
 
 public class Gradients
 {
-    public float[] TexU { get; }
-    public float[] TexV { get; }
-    public float[] OneOvrZ { get; }
-    public float[] Depth { get; }
-    public float[] Light { get; }
+    public float[] TexU { get; } = new float[3];
+    public float[] TexV { get; } = new float[3];
+    public float[] OneOvrZ { get; } = new float[3];
+    public float[] Depth { get; } = new float[3];
+    public float[] Light { get; } = new float[3];
 
     public float TexUXStep { get; }
     public float TexUYStep { get; }
@@ -44,12 +44,6 @@ public class Gradients
 
     public Gradients(Vertex minYVert, Vertex midYVert, Vertex maxYVert)
     {
-        TexU = new float[3];
-        TexV = new float[3];
-        OneOvrZ = new float[3];
-        Depth = new float[3];
-        Light = new float[3];
-
         OneOvrZ[0] = 1.0f / minYVert.Position.W;
         OneOvrZ[1] = 1.0f / midYVert.Position.W;
         OneOvrZ[2] = 1.0f / maxYVert.Position.W;

@@ -6,13 +6,12 @@ using OpenTK;
 
 public class Mesh
 {
-    public List<Vertex> Vertices { get; }
+    public List<Vertex> Vertices { get; } = new List<Vertex>();
     public List<int> Indices { get; }
 
     public Mesh(string fileName)
     {
         IndexedModel model = new OBJModel(fileName).ToIndexedModel();
-        Vertices = new List<Vertex>();
 
         for (int i = 0; i < model.Positions.Count; ++i)
         {
