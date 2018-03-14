@@ -160,7 +160,6 @@ namespace SoftwareRenderer
                     normalModel.Positions.Add(currentPosition);
                     normalModel.TexCoords.Add(currentTexCoord);
                     normalModel.Normals.Add(currentNormal);
-                    normalModel.Tangents.Add(new Vector4(0, 0, 0, 0));
                 }
 
                 result.Indices.Add(modelVertexIndex);
@@ -169,12 +168,7 @@ namespace SoftwareRenderer
             }
 
             if (!hasNormals)
-            {
                 normalModel.CalcNormals();
-
-                for (int i = 0; i < result.Positions.Count; ++i)
-                    result.Tangents.Add(normalModel.Tangents[indexMap[i]]);
-            }
 
             return result;
         }
