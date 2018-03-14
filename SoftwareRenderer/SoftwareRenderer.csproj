@@ -45,7 +45,6 @@
     <Compile Include="Matrix4Utils.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="Gradients.cs" />
-    <Compile Include="Random.cs" />
     <Compile Include="OBJModel.cs" />
     <Compile Include="IndexedModel.cs" />
     <Compile Include="Mesh.cs" />
