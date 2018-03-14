@@ -7,69 +7,61 @@ namespace SoftwareRenderer
 {
     public class Edge
     {
-        protected float x;
         protected float xStep;
-        protected int yStart;
-        protected int yEnd;
-        protected float texCoordX;
         protected float texCoordXStep;
-        protected float texCoordY;
         protected float texCoordYStep;
-        protected float oneOverZ;
         protected float oneOverZStep;
-        protected float depth;
         protected float depthStep;
-        protected float lightAmt;
         protected float lightAmtStep;
 
-        public float X { get { return x; } }
-        public int YStart { get { return yStart; } }
-        public int YEnd { get { return yEnd; } }
-        public float TexCoordX { get { return texCoordX; } }
-        public float TexCoordY { get { return texCoordY; } }
-        public float OneOverZ { get { return oneOverZ; } }
-        public float Depth { get { return depth; } }
-        public float LightAmt { get { return lightAmt; } }
+        public float X { get; protected set; }
+        public int YStart { get; protected set; }
+        public int YEnd { get; protected set; }
+        public float TexCoordX { get; protected set; }
+        public float TexCoordY { get; protected set; }
+        public float OneOverZ { get; protected set; }
+        public float Depth { get; protected set; }
+        public float LightAmt { get; protected set; }
 
         public Edge(Gradients gradients, Vertex minYVert, Vertex maxYVert,
                    int minYVertIndex)
         {
-            yStart = (int)Math.Ceiling(minYVert.Y);
-            yEnd = (int)Math.Ceiling(maxYVert.Y);
+            YStart = (int)Math.Ceiling(minYVert.Y);
+            YEnd = (int)Math.Ceiling(maxYVert.Y);
 
             float yDist = maxYVert.Y - minYVert.Y;
             float xDist = maxYVert.X - minYVert.X;
 
-            float yPrestep = yStart - minYVert.Y;
+            float yPrestep = YStart - minYVert.Y;
             xStep = xDist / yDist;
-            x = minYVert.X + yPrestep * xStep;
-            float xPrestep = x - minYVert.X;
+            X = minYVert.X + yPrestep * xStep;
+            float xPrestep = X - minYVert.X;
 
-            texCoordX = gradients.TexCoordX[minYVertIndex] +
+            TexCoordX = gradients.TexCoordX[minYVertIndex] +
                         gradients.TexCoordXYStep * yPrestep +
                         gradients.TexCoordXXStep * xPrestep;
             texCoordXStep = gradients.TexCoordXYStep +
                             gradients.TexCoordXXStep * xStep;
 
-            texCoordY = gradients.TexCoordY[minYVertIndex] +
+            TexCoordY = gradients.TexCoordY[minYVertIndex] +
                         gradients.TexCoordYYStep * yPrestep +
                         gradients.TexCoordYXStep * xPrestep;
             texCoordYStep = gradients.TexCoordYYStep +
                             gradients.TexCoordYXStep * xStep;
 
-            oneOverZ = gradients.OneOverZ[minYVertIndex] +
+            OneOverZ = gradients.OneOverZ[minYVertIndex] +
                        gradients.OneOverZYStep * yPrestep +
                        gradients.OneOverZXStep * xPrestep;
             oneOverZStep = gradients.OneOverZYStep +
                            gradients.OneOverZXStep * xStep;
 
-            depth = gradients.Depth[minYVertIndex] +
+            Depth = gradients.Depth[minYVertIndex] +
                     gradients.DepthYStep * yPrestep +
                     gradients.DepthXStep * xPrestep;
             depthStep = gradients.DepthYStep +
                         gradients.DepthXStep * xStep;
 
-            lightAmt = gradients.LightAmt[minYVertIndex] +
+            LightAmt = gradients.LightAmt[minYVertIndex] +
                        gradients.LightAmtYStep * yPrestep +
                        gradients.LightAmtXStep * xPrestep;
             lightAmtStep = gradients.LightAmtYStep +
@@ -78,12 +70,12 @@ namespace SoftwareRenderer
 
         public void Step()
         {
-            x += xStep;
-            texCoordX += texCoordXStep;
-            texCoordY += texCoordYStep;
-            oneOverZ += oneOverZStep;
-            depth += depthStep;
-            lightAmt += lightAmtStep;
+            X += xStep;
+            TexCoordX += texCoordXStep;
+            TexCoordY += texCoordYStep;
+            OneOverZ += oneOverZStep;
+            Depth += depthStep;
+            LightAmt += lightAmtStep;
         }
     }
 }
