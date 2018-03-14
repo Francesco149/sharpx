@@ -46,7 +46,6 @@
     <Compile Include="Edge.cs" />
     <Compile Include="Gradients.cs" />
     <Compile Include="OBJModel.cs" />
-    <Compile Include="IndexedModel.cs" />
     <Compile Include="Mesh.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Transform.cs" />

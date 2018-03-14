@@ -134,9 +134,9 @@ public class OBJModel
         return new OBJIndex(vertexIndex, texCoordIndex, normalIndex);
     }
 
-    public IndexedModel ToIndexedModel()
+    public Mesh ToMesh()
     {
-        var result = new IndexedModel();
+        var result = new Mesh();
         var indexMap = new Dictionary<OBJIndex, int>();
 
         for (int i = 0; i < indices.Count; ++i)
@@ -144,14 +144,12 @@ public class OBJModel
             OBJIndex index = indices[i];
 
             Vector4 position = positions[index.VertexIndex];
-            Vector4 texCoord;
-            Vector4 normal;
 
-            texCoord = hasTexCoords ?
+            Vector4 texCoord = hasTexCoords ?
                 texCoords[index.TexCoordIndex]
                 : new Vector4(0, 0, 0, 0);
 
-            normal = hasNormals ?
+            Vector4 normal = hasNormals ?
                 normals[index.NormalIndex]
                 : new Vector4(0, 0, 0, 0);
 
@@ -159,14 +157,9 @@ public class OBJModel
 
             if (!found)
             {
-                vertexIndex = result.Positions.Count;
+                vertexIndex = result.Vertices.Count;
                 indexMap[index] = vertexIndex;
-
-                result.Positions.Add(position);
-                result.TexCoords.Add(texCoord);
-
-                if (hasNormals)
-                    result.Normals.Add(normal);
+                result.Vertices.Add(new Vertex(position, texCoord, normal));
             }
 
             result.Indices.Add(vertexIndex);

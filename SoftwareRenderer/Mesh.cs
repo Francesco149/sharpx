@@ -1,30 +1,26 @@
 ﻿// This is free and unencumbered software released into the public domain.
 // See the attached UNLICENSE or http://unlicense.org/
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using OpenTK;
 
 public class Mesh
 {
     public List<Vertex> Vertices { get; } = new List<Vertex>();
-    public List<int> Indices { get; }
+    public List<int> Indices { get; } = new List<int>();
 
-    public Mesh(string fileName)
+    public static Mesh FromFile(string fileName)
     {
-        IndexedModel model = new OBJModel(fileName).ToIndexedModel();
+        string ext = Path.GetExtension(fileName);
 
-        for (int i = 0; i < model.Positions.Count; ++i)
+        switch (ext)
         {
-            var v = new Vertex(
-                model.Positions[i],
-                model.TexCoords[i],
-                model.Normals[i]
-            );
-
-            Vertices.Add(v);
+        case ".obj": return new OBJModel(fileName).ToMesh();
         }
 
-        Indices = model.Indices;
+        throw new ArgumentException($"Unknown Mesh format {ext}");
     }
 
     public void Draw(RenderContext context, Matrix4 viewProjection,

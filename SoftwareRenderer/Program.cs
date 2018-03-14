@@ -14,8 +14,8 @@ class MainClass
         Bitmap texture = new Bitmap("./res/bricks.jpg");
         Bitmap texture2 = new Bitmap("./res/bricks2.jpg");
 
-        Mesh monkeyMesh = new Mesh("./res/smoothMonkey0.obj");
-        Mesh terrainMesh = new Mesh("./res/terrain2.obj");
+        Mesh monkeyMesh = Mesh.FromFile("./res/smoothMonkey0.obj");
+        Mesh terrainMesh = Mesh.FromFile("./res/terrain2.obj");
 
         Transform monkeyTransform = new Transform(new Vector4(0, 0, 3, 1));
         Transform terrainTransform = new Transform(new Vector4(0, -1, 0, 1));
