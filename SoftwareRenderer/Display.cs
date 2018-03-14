@@ -6,29 +6,26 @@ using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
 using OpenTK.Input;
 
-namespace SoftwareRenderer
+public class Display : GameWindow
 {
-    public class Display : GameWindow
+    protected byte[] displayComponents;
+
+    public RenderContext FrameBuffer { get; }
+    public KeyboardState Input { get { return Keyboard.GetState(); } }
+
+    public Display()
+        : base(640, 480, GraphicsMode.Default, "Software Rendering",
+               GameWindowFlags.FixedWindow)
     {
-        protected byte[] displayComponents;
+        FrameBuffer = new RenderContext(Width, Height);
+        displayComponents = new byte[Width * Height * 3];
+    }
 
-        public RenderContext FrameBuffer { get; }
-        public KeyboardState Input { get { return Keyboard.GetState(); } }
-
-        public Display()
-            : base(640, 480, GraphicsMode.Default, "Software Rendering",
-                   GameWindowFlags.FixedWindow)
-        {
-            FrameBuffer = new RenderContext(Width, Height);
-            displayComponents = new byte[Width * Height * 3];
-        }
-
-        public new void SwapBuffers()
-        {
-            FrameBuffer.CopyToByteArray(displayComponents);
-            GL.DrawPixels(FrameBuffer.Width, FrameBuffer.Height,
-              PixelFormat.Bgr, PixelType.UnsignedByte, displayComponents);
-            base.SwapBuffers();
-        }
+    public new void SwapBuffers()
+    {
+        FrameBuffer.CopyToByteArray(displayComponents);
+        GL.DrawPixels(FrameBuffer.Width, FrameBuffer.Height,
+          PixelFormat.Bgr, PixelType.UnsignedByte, displayComponents);
+        base.SwapBuffers();
     }
 }

@@ -4,37 +4,34 @@
 using System;
 using OpenTK;
 
-namespace SoftwareRenderer
+public static class Matrix4Utils
 {
-    public static class Matrix4Utils
+    public static Matrix4 InitScreenSpaceTransform(float halfWidth,
+                                                   float halfHeight)
     {
-        public static Matrix4 InitScreenSpaceTransform(float halfWidth,
-                                                       float halfHeight)
-        {
-            return new Matrix4(
-                halfWidth, 0, 0, 0,
-                0, -halfHeight, 0, 0,
-                0, 0, 1, 0,
-                halfWidth - 0.5f, halfHeight - 0.5f, 0, 1
-            );
-        }
+        return new Matrix4(
+            halfWidth, 0, 0, 0,
+            0, -halfHeight, 0, 0,
+            0, 0, 1, 0,
+            halfWidth - 0.5f, halfHeight - 0.5f, 0, 1
+        );
+    }
 
-        public static Matrix4 InitPerspective(float fov, float aspectRatio,
-                                              float zNear, float zFar)
-        {
-            // Matrix4.CreatePerspectiveFieldOfView uses the OpenGL convention
-            // (forward is negative Z) so I made this which mimick benny's
-            // convention
+    public static Matrix4 InitPerspective(float fov, float aspectRatio,
+                                          float zNear, float zFar)
+    {
+        // Matrix4.CreatePerspectiveFieldOfView uses the OpenGL convention
+        // (forward is negative Z) so I made this which mimick benny's
+        // convention
 
-            float tanHalfFOV = (float)Math.Tan(fov / 2);
-            float zRange = zNear - zFar;
+        float tanHalfFOV = (float)Math.Tan(fov / 2);
+        float zRange = zNear - zFar;
 
-            return new Matrix4(
-                1 / (tanHalfFOV * aspectRatio), 0, 0, 0,
-                0, 1 / tanHalfFOV, 0, 0,
-                0, 0, (-zNear - zFar) / zRange, 1,
-                0, 0, 2 * zFar * zNear / zRange, 0
-            );
-        }
+        return new Matrix4(
+            1 / (tanHalfFOV * aspectRatio), 0, 0, 0,
+            0, 1 / tanHalfFOV, 0, 0,
+            0, 0, (-zNear - zFar) / zRange, 1,
+            0, 0, 2 * zFar * zNear / zRange, 0
+        );
     }
 }

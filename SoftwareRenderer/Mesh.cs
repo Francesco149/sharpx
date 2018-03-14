@@ -4,41 +4,38 @@
 using System.Collections.Generic;
 using OpenTK;
 
-namespace SoftwareRenderer
+public class Mesh
 {
-    public class Mesh
+    public List<Vertex> Vertices { get; }
+    public List<int> Indices { get; }
+
+    public Mesh(string fileName)
     {
-        public List<Vertex> Vertices { get; }
-        public List<int> Indices { get; }
+        IndexedModel model = new OBJModel(fileName).ToIndexedModel();
 
-        public Mesh(string fileName)
+        Vertices = new List<Vertex>();
+        for (int i = 0; i < model.Positions.Count; ++i)
         {
-            IndexedModel model = new OBJModel(fileName).ToIndexedModel();
-
-            Vertices = new List<Vertex>();
-            for (int i = 0; i < model.Positions.Count; ++i)
-            {
-                Vertices.Add(new Vertex(model.Positions[i],
-                                        model.TexCoords[i],
-                                        model.Normals[i]));
-            }
-
-            Indices = model.Indices;
+            Vertices.Add(new Vertex(model.Positions[i],
+                                    model.TexCoords[i],
+                                    model.Normals[i]));
         }
 
-        public void Draw(RenderContext context, Matrix4 viewProjection,
-                         Matrix4 transform, Bitmap texture)
-        {
-            Matrix4 mvp = transform * viewProjection;
+        Indices = model.Indices;
+    }
 
-            for (int i = 0; i < Indices.Count; i += 3)
-            {
-                context.DrawTriangle(
-                    Vertices[Indices[i]].Transform(mvp, transform),
-                    Vertices[Indices[i + 1]].Transform(mvp, transform),
-                    Vertices[Indices[i + 2]].Transform(mvp, transform),
-                    texture);
-            }
+    public void Draw(RenderContext context, Matrix4 viewProjection,
+                     Matrix4 transform, Bitmap texture)
+    {
+        Matrix4 mvp = transform * viewProjection;
+
+        for (int i = 0; i < Indices.Count; i += 3)
+        {
+            context.DrawTriangle(
+                Vertices[Indices[i]].Transform(mvp, transform),
+                Vertices[Indices[i + 1]].Transform(mvp, transform),
+                Vertices[Indices[i + 2]].Transform(mvp, transform),
+                texture);
         }
     }
 }

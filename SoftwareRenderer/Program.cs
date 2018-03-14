@@ -4,63 +4,60 @@
 using System;
 using OpenTK;
 
-namespace SoftwareRenderer
+class MainClass
 {
-    class MainClass
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        Display display = new Display();
+        RenderContext target = display.FrameBuffer;
+
+        Bitmap texture = new Bitmap("./res/bricks.jpg");
+        Bitmap texture2 = new Bitmap("./res/bricks2.jpg");
+        Mesh monkeyMesh = new Mesh("./res/smoothMonkey0.obj");
+        Transform monkeyTransform = new Transform(new Vector4(0, 0, 3, 1));
+
+        Mesh terrainMesh = new Mesh("./res/terrain2.obj");
+        Transform terrainTransform =
+            new Transform(new Vector4(0, -1, 0, 1));
+
+        Camera camera = new Camera(
+            Matrix4Utils.InitPerspective(
+                MathHelper.DegreesToRadians(70),
+                (float)target.Width / target.Height,
+                0.1f, 1000.0f
+            )
+        );
+
+        long previousTime = DateTime.UtcNow.Ticks;
+
+        display.UpdateFrame += delegate (object s, FrameEventArgs e)
         {
-            Display display = new Display();
-            RenderContext target = display.FrameBuffer;
+            long currentTime = DateTime.UtcNow.Ticks;
+            float delta = (float)((currentTime - previousTime)
+                                  / 10000000.0);
+            previousTime = currentTime;
 
-            Bitmap texture = new Bitmap("./res/bricks.jpg");
-            Bitmap texture2 = new Bitmap("./res/bricks2.jpg");
-            Mesh monkeyMesh = new Mesh("./res/smoothMonkey0.obj");
-            Transform monkeyTransform = new Transform(new Vector4(0, 0, 3, 1));
+            camera.Update(display.Input, delta);
+            Matrix4 vp = camera.ViewProjection;
 
-            Mesh terrainMesh = new Mesh("./res/terrain2.obj");
-            Transform terrainTransform =
-                new Transform(new Vector4(0, -1, 0, 1));
-
-            Camera camera = new Camera(
-                Matrix4Utils.InitPerspective(
-                    MathHelper.DegreesToRadians(70),
-                    (float)target.Width / target.Height,
-                    0.1f, 1000.0f
-                )
+            monkeyTransform = monkeyTransform.Rotate(
+                Quaternion.FromAxisAngle(new Vector3(0, 1, 0), delta)
             );
 
-            long previousTime = DateTime.UtcNow.Ticks;
+            target.Clear(0x00);
+            target.ClearDepthBuffer();
 
-            display.UpdateFrame += delegate (object s, FrameEventArgs e)
-            {
-                long currentTime = DateTime.UtcNow.Ticks;
-                float delta = (float)((currentTime - previousTime)
-                                      / 10000000.0);
-                previousTime = currentTime;
+            monkeyMesh.Draw(
+                target, vp, monkeyTransform.Transformation, texture2
+            );
 
-                camera.Update(display.Input, delta);
-                Matrix4 vp = camera.ViewProjection;
+            terrainMesh.Draw(
+                target, vp, terrainTransform.Transformation, texture
+            );
 
-                monkeyTransform = monkeyTransform.Rotate(
-                    Quaternion.FromAxisAngle(new Vector3(0, 1, 0), delta)
-                );
+            display.SwapBuffers();
+        };
 
-                target.Clear(0x00);
-                target.ClearDepthBuffer();
-
-                monkeyMesh.Draw(
-                    target, vp, monkeyTransform.Transformation, texture2
-                );
-
-                terrainMesh.Draw(
-                    target, vp, terrainTransform.Transformation, texture
-                );
-
-                display.SwapBuffers();
-            };
-
-            display.Run();
-        }
+        display.Run();
     }
 }
