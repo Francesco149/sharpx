@@ -8,8 +8,8 @@ namespace SoftwareRenderer
 {
     public class Mesh
     {
-        public readonly List<Vertex> Vertices;
-        public readonly List<int> Indices;
+        public List<Vertex> Vertices { get; }
+        public List<int> Indices { get; }
 
         public Mesh(string fileName)
         {
