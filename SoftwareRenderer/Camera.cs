@@ -55,13 +55,13 @@ namespace SoftwareRenderer
             if (input.IsKeyDown(Key.A))
                 Move(transform.Rot * X_AXIS, -movAmt);
 
-            if (input.IsKeyUp(Key.Right))
+            if (input.IsKeyDown(Key.Right))
                 Rotate(Y_AXIS, sensitivityX);
-            if (input.IsKeyUp(Key.Left))
+            if (input.IsKeyDown(Key.Left))
                 Rotate(Y_AXIS, -sensitivityX);
-            if (input.IsKeyUp(Key.Down))
+            if (input.IsKeyDown(Key.Down))
                 Rotate(transform.Rot * X_AXIS, sensitivityY);
-            if (input.IsKeyUp(Key.Up))
+            if (input.IsKeyDown(Key.Up))
                 Rotate(transform.Rot * X_AXIS, -sensitivityY);
         }
 
@@ -73,7 +73,7 @@ namespace SoftwareRenderer
         protected void Rotate(Vector4 axis, float angle)
         {
             transform = transform.Rotate(
-                Quaternion.FromAxisAngle(new Vector3(axis), -angle)
+                Quaternion.FromAxisAngle(new Vector3(axis), angle)
             );
         }
     }
