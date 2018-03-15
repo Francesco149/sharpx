@@ -1,4 +1,4 @@
-﻿pure C# implementation of [thebennybox's software renderer][1] in < 1000 LOC
+﻿C# implementation of [thebennybox's software renderer][1] in < 1000 LOC
 
 ![](https:i.imgur.com/8hKZiP0.png)
 
