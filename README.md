@@ -1,6 +1,6 @@
-﻿C# implementation of [thebennybox's software renderer][1] in < 1000 LOC
+C# implementation of [thebennybox's software renderer][1] in < 1000 LOC
 
-![](https:i.imgur.com/8hKZiP0.png)
+![](https://i.imgur.com/8hKZiP0.png)
 
 to celebrate benny's return I decided to go through his tutorials again
 
@@ -21,6 +21,6 @@ mono bin/Release/SoftwareRenderer.exe
 
 * license
 this is free and unencumbered software released into the internal domain.
-see the attached UNLICENSE or http:unlicense.org/
+see the attached UNLICENSE or http://unlicense.org/
 
-[1]: https:www.youtube.com/playlist?list=PLEETnX-uPtBUbVOok816vTl1K9vV1GgH5
+[1]: https://www.youtube.com/playlist?list=PLEETnX-uPtBUbVOok816vTl1K9vV1GgH5

@@ -12,9 +12,9 @@ dobuild()
     msbuild -m -p:Configuration="${target}" || return 1
     mono --aot "${exepath}" || return 1
 
-    cat "${proj}/${proj}.cs" \
+    tail -c +4 "${proj}/${proj}.cs" \
         | sed -e '/^$/,$d' \
-        | sed 's|//[ ]*||g' \
+        | sed 's|^//[ ]*||g' \
               > README.md \
         || return 1
 
@@ -24,6 +24,6 @@ dobuild()
 olddir="$(pwd)"
 cd "${dir}"
 dobuild
-res = $?
+res=$?
 cd "${olddir}"
 exit ${res}
