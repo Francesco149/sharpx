@@ -4,9 +4,26 @@ dir="$(realpath ${0})"
 dir="$(dirname ${dir})"
 proj="$(basename ${dir})"
 
-olddir="$(pwd)"
-cd "${dir}"
 target="${1-Release}"
 exepath="${proj}/bin/${target}/${proj}.exe"
-msbuild -m -p:Configuration="${target}" && mono --aot "${exepath}"
+
+dobuild()
+{
+    msbuild -m -p:Configuration="${target}" || return 1
+    mono --aot "${exepath}" || return 1
+
+    cat "${proj}/${proj}.cs" \
+        | sed -e '/^$/,$d' \
+        | sed 's|//[ ]*||g' \
+              > README.md \
+        || return 1
+
+    return 0
+}
+
+olddir="$(pwd)"
+cd "${dir}"
+dobuild
+res = $?
 cd "${olddir}"
+exit ${res}
