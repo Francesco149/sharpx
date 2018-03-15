@@ -14,6 +14,7 @@ OpenTK to get started with the series and ended up playing with it myself
 
 compile and run with
 ```sh
+nuget restore
 msbuild -m -p:Configuration=Release
 mono --aot bin/Release/SoftwareRenderer.exe
 mono bin/Release/SoftwareRenderer.exe
