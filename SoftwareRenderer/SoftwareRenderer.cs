@@ -19,7 +19,7 @@
 // mono bin/Release/SoftwareRenderer.exe
 // ```
 //
-// * license
+// # license
 // this is free and unencumbered software released into the internal domain.
 // see the attached UNLICENSE or http://unlicense.org/
 //
